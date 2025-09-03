@@ -1,0 +1,70 @@
+body {
+    background-color: black;
+    background-image: url("pontejk1.png");
+    background-repeat: no-repeat;
+    background-position: left 100px;
+    background-size: 75%;
+    
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("pontejk1.png");
+    background-repeat: no-repeat;
+    background-position: left 100px;
+    background-size: 75%;
+    opacity: 0.3; /* controla a transparência */
+    z-index: -1; /* fica atrás do conteúdo */
+}
+
+.texto-principal {
+    font-family: poppins, sans-serif;
+    margin-right: 150px;
+    font-size: 55px;
+    line-height: 5.0;
+    margin-top: -100px;
+    text-shadow: 2px 2px 5px black;
+    
+}
+.texto-secundario {
+    font-family: poppins, sans-serif;
+    font-weight: 450;
+    font-size: 45px;
+    margin-top: -10px;
+    text-shadow: 2px 2px 5px black;
+    
+}
+
+.card-cadastro {
+    margin-left: 150px;
+}
+.card-login {
+    margin-left: 150px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+h1 span {
+    color: #ff7a00;
+}
+
+input.form-control {
+    padding: 12px;
+    font-size: 1rem;
+}
+
+.btn-dark {
+    background: #000;
+    color: #ff7a00;
+}
+
+.btn-dark:hover {
+    background: black;
+}
