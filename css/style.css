@@ -1,0 +1,146 @@
+/* Resetando margens e padding para um layout mais consistente */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilo do body para centralizar o conteúdo verticalmente */
+body {
+    font-family: system-ui, Arial;
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center;     /* Centraliza verticalmente */
+    min-height: 100vh;       /* Garante que o conteúdo ocupe a altura total da tela */
+    padding: 24px;
+    background-color: #f4f4f4; /* Cor de fundo para suavizar */
+}
+
+/* Estilo da div principal que contém todos os elementos da página */
+.main-container {
+    width: 100%;
+    max-width: 560px;
+    background: white;
+    padding: 38px;
+    border-radius: 8px; /* Adicionando borda arredondada */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.055); /* Sombra para destacar o conteúdo */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Estilo do formulário geral */
+.form {
+    display: grid;
+    gap: 12px;
+    margin-top: 15px;
+    margin-bottom: 35px;
+}
+
+/* Estilo de cada grupo de formulário */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Estilo dos inputs, textareas e select para garantir o uso da fonte correta */
+input, textarea, select, button {
+    font-family: system-ui, Arial; /* Garantir que a fonte seja aplicada */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* Estilo dos inputs */
+input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 100%;
+}
+
+/* Estilo do botão */
+button {
+    padding: 10px;
+    border: 0;
+    border-radius: 8px;
+    background: #006eff;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Estilo dos botões de link (para redirecionamento) */
+.link-button {
+    display: inline-block;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #006eff;
+    text-align: center;
+}
+
+/* Estilo para mensagens de sucesso */
+.success {
+    background: #eef;
+    border: 1px solid #99f;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Estilo para mensagens de erro */
+.error {
+    background: #fee;
+    border: 1px solid #f99;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Estilo para textos mais suaves */
+.text {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Estilo para a foto de perfil */
+.foto-perfil {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 16px;
+}
+
+.foto-preview {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 16px;
+}
+
+/* Estilo para o container da página de perfil */
+.perfil-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: 30px;
+}
+
+/* Estilo para containers de itens em linha */
+.stack {
+    display: flex;
+    gap: 12px;
+}
+
+/* Estilo para o texto "Nenhum arquivo escolhido" no input de file */
+input[type="file"]::file-selector-button {
+    font-family: system-ui, Arial; /* Garantir a fonte */
+    background-color: #f4f4f4; /* Cor de fundo */
+    border: 1px solid #ccc; /* Bordas */
+    padding: 10px; /* Espaçamento */
+    border-radius: 8px; /* Bordas arredondadas */
+}
