@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $novo_email = trim($_POST['email']);
     $nova_senha = $_POST['senha'];
     $nova_senha_confirmacao = $_POST['senha_confirmacao'];
-    $nova_foto = $_FILES['foto_perfil'];
+    $nova_foto = $_FILES['foto_perfil'];  // Recebe o arquivo da foto de perfil
 
     // Validar os dados
     if (empty($novo_nome) || empty($novo_email)) {
@@ -46,10 +46,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!in_array(strtolower($extensao), $extensoes_validas)) {
             $mensagem_erro = "Formato de imagem inválido. Somente JPG, JPEG, PNG ou GIF são permitidos.";
         } else {
-            // Definir novo nome para a imagem (para evitar conflitos)
-            $novo_nome_foto = uniqid() . '.' . $extensao;
-            move_uploaded_file($nova_foto['tmp_name'], '../img/' . $novo_nome_foto);
+            // Gerar um nome único para a imagem (para evitar conflitos de nomes)
+            $novo_nome_foto = uniqid('foto_') . '.' . $extensao;
+
+            // Movendo o arquivo para o diretório de imagens
+            $caminho_destino = '../img/' . $novo_nome_foto;
+            if (move_uploaded_file($nova_foto['tmp_name'], $caminho_destino)) {
+                // Sucesso no upload da imagem, agora atualizar no banco
+                $query = 'UPDATE usuario SET nome = ?, email = ?, foto_perfil = ? WHERE id_usuario = ?';
+                $parametros = [$novo_nome, $novo_email, $novo_nome_foto, $userId];
+            } else {
+                $mensagem_erro = "Erro ao salvar a imagem. Tente novamente.";
+            }
         }
+    }
+
+    // Se o botão de "Remover Imagem" for clicado, atualiza a foto para a padrão
+    if (isset($_POST['remover_imagem'])) {
+        $novo_nome_foto = 'default-profile.jpg';  // Foto padrão
+        $query = 'UPDATE usuario SET foto_perfil = ? WHERE id_usuario = ?';
+        $parametros = [$novo_nome_foto, $userId];
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($parametros);
+
+        $mensagem_sucesso = "Foto de perfil removida com sucesso!";
     }
 
     // Se não houver erro, realizar a atualização no banco
@@ -91,6 +111,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Editar Perfil</title>
     <link rel="stylesheet" href="../css/style.css">
 
+    <script>
+        // Função para atualizar a imagem de prévia quando o usuário selecionar uma nova imagem
+        function atualizarImagemPrevia(input) {
+            var file = input.files[0];  // Pega o primeiro arquivo selecionado
+            var reader = new FileReader();  // Cria o leitor de arquivos
+
+            reader.onload = function(e) {
+                // Altera a fonte da imagem de prévia para o arquivo carregado
+                document.getElementById('foto_preview').src = e.target.result;
+            }
+
+            // Se um arquivo foi selecionado, o FileReader vai ler o arquivo
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="main-container">
@@ -107,8 +144,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" enctype="multipart/form-data" class="form">
             <div class="form-group">
                 <label for="foto_perfil">Foto de Perfil</label>
-                <input type="file" name="foto_perfil" id="foto_perfil">
-                <img src="../img/<?php echo htmlspecialchars($foto_perfil); ?>" alt="Foto de Perfil Atual" class="foto-preview">
+                <input type="file" name="foto_perfil" id="foto_perfil" onchange="atualizarImagemPrevia(this)">
+                <img src="../img/<?php echo htmlspecialchars($foto_perfil); ?>" id="foto_preview" alt="Foto de Perfil Atual" class="foto-preview">
             </div>
             
             <div class="form-group">
@@ -131,10 +168,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="senha_confirmacao" id="senha_confirmacao">
             </div>
 
-            <button type="submit">Salvar Alterações</button>
+            <!-- Botão de remover imagem -->
+            <button name="remover_imagem">Remover Foto de Perfil</button>
+            <button type="submit">Salvar as alterações</button>
         </form>
-
-        <a class="link-button "href="perfil.php">Voltar para o Perfil</a>
+        
+        <a class="link-button" href="perfil.php">Salvar e Voltar para o Perfil</a>
     </div>
 </body>
 </html>

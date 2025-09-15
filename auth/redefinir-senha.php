@@ -6,6 +6,9 @@ require __DIR__ . '/../bd/conexao.php';
 $mensagem_erro = '';
 $mensagem_sucesso = '';
 
+// Estabelece a conexão
+$pdo = pdo();  // Agora armazenamos o retorno da função pdo() em uma variável
+
 // Recupera o token da URL
 if (!isset($_GET['token'])) {
     $mensagem_erro = 'Token inválido.';
