@@ -33,7 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['nome'];
             $_SESSION['user_role'] = $user['tipo_usuario'];
 
-            header('Location: ' . url('dashboard.php'));
+            // 🔹 Redirecionamento baseado no tipo de usuário
+            if ($user['tipo_usuario'] === 'admin') {
+                header('Location: ' . url('locais/crud.php')); // ajuste o caminho se necessário
+            } else {
+                header('Location: ' . url('dashboard.php'));
+            }
             exit;
         }
     }
@@ -47,7 +52,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Entrar - Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../css/style.css">
-
 </head>
 <body>
   <div class="main-container">

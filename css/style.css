@@ -144,3 +144,151 @@ input[type="file"]::file-selector-button {
     padding: 10px; /* Espaçamento */
     border-radius: 8px; /* Bordas arredondadas */
 }
+
+/* Container principal */
+.container-crud {
+  display: flex;
+  gap: 80px;
+  width: 90%;
+  align-items: flex-start;
+  height: 70vh; /* altura exata da tela */
+}
+
+/* Coluna esquerda */
+.left-container-crud {
+  flex: 4;
+}
+
+.container-create {
+  background: #fff;
+  padding: 35px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Coluna direita */
+.right-container-crud {
+  flex: 6;                  /* ocupa 3 partes → fica mais larga */
+}
+
+/* Títulos */
+.left-container-crud h2,
+.right-container-crud h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+/* ====== Tabela CRUD ====== */
+.table-wrapper {
+  max-height: 700px;       /* limite de altura */
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Tabela */
+.table-crud {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-crud th,
+.table-crud td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-crud th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.table-crud tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ====== Formulário CRUD compacto ====== */
+.form-crud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 0;
+}
+
+.form-crud .half {
+  flex: 1 1 calc(50% - 6px); /* ocupa metade da linha */
+}
+
+.form-crud .full {
+  flex: 1 1 100%; /* ocupa linha inteira */
+}
+
+.form-crud input,
+.form-crud select {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.form-crud button {
+  padding: 6px 12px;
+  background-color: #007BFF;
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.form-crud button:hover {
+  background-color: #0056b3;
+}
+
+/* Link de excluir no estilo botão */
+.link-delete {
+  color: #dc3545;
+  margin-left: 10px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.link-delete:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;       /* ocupa a largura inteira */
+  width: 100%;          /* garante 100% */
+  text-align: center;
+  margin-top: 6px;      /* espaço entre os botões */
+}
+
+.btn-edit {
+  background-color: #007BFF;
+  color: #fff;
+}
+
+.btn-edit:hover {
+  background-color: #0056b3;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+.btn-delete:hover {
+  background-color: #a71d2a;
+}
