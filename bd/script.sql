@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS locais (
     tipo ENUM('Restaurante','Bar','Parque','Evento','Museu','Outro') NOT NULL,
     regiao VARCHAR(50) NOT NULL,
     faixa_preco ENUM('Econômico','Médio','Alto') NOT NULL,
+    imagem_capa VARCHAR(255)
     servicos TEXT,
     avaliacao_media FLOAT DEFAULT 0,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

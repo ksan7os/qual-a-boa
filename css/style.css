@@ -8,7 +8,7 @@
 /* Estilo do body para centralizar o conteúdo verticalmente */
 body {
     font-family: system-ui, Arial;
-    display: flex;
+    display: flex; 
     justify-content: center; /* Centraliza horizontalmente */
     align-items: center;     /* Centraliza verticalmente */
     min-height: 100vh;       /* Garante que o conteúdo ocupe a altura total da tela */
@@ -291,4 +291,95 @@ input[type="file"]::file-selector-button {
 
 .btn-delete:hover {
   background-color: #a71d2a;
+}
+
+/* ====== Página Explorar ====== */
+
+/* Container dos filtros */
+.filters-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 16px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+}
+
+.filters-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filters-form input,
+.filters-form select,
+.filters-form button {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.filters-form button {
+  background: #006eff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filters-form button:hover {
+  background: #0056cc;
+}
+
+/* Grid de locais */
+.locais-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 30px auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Cartão de local */
+.local-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.local-card:hover {
+  transform: translateY(-5px);
+}
+
+.local-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.local-card h3 {
+  font-size: 18px;
+  margin: 12px;
+  color: #333;
+}
+
+.local-card p {
+  font-size: 14px;
+  color: #666;
+  margin: 4px 12px;
+}
+
+/* Avaliação destacada */
+.local-card p:last-child {
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 12px;
 }
