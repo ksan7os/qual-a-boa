@@ -24,8 +24,9 @@ $nome = $row ? $row['nome'] : ($_SESSION['user_name'] ?? 'Usuário');
     <h1>Olá, <?=htmlspecialchars($nome)?> 👋</h1>
     <p>Qual a boa de hoje? </p>
     <a class="link-button" href="<?= url('auth/perfil.php') ?>">Perfil</a>
-    <a class="link-button" href="<?= url('auth/logout.php') ?>">Sair</a>
+    <a class="link-button" href="<?= url('locais/explorar.php') ?>">Locais</a>
     <a class="link-button" href="<?= url('locais/crud.php') ?>">Painel do Administrador</a>
+    <a class="link-button" href="<?= url('auth/logout.php') ?>">Sair</a>
   </div>
 </body>
 </html>
