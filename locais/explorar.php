@@ -100,6 +100,7 @@ $locais = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <p><?= htmlspecialchars($local['regiao']) ?></p>
                 <p>Faixa de Preço: <?= htmlspecialchars($local['faixa_preco']) ?></p>
                 <p>Avaliação Média: <?= number_format($local['avaliacao_media'], 1) ?></p>
+                <a href="detalhes.php?id=<?= $local['id_local'] ?>" class="btn-detalhes">Ver detalhes</a>
             </div>
         <?php endforeach; ?>
     </div>

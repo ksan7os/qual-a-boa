@@ -40,10 +40,10 @@ CREATE TABLE IF NOT EXISTS password_resets (
 CREATE TABLE IF NOT EXISTS locais (
     id_local INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    tipo ENUM('Restaurante','Bar','Parque','Evento','Museu','Outro') NOT NULL,
+    tipo ENUM('Restaurante','Bar','Parque','Evento','Museu','Outro') NOT NULL, 
     regiao VARCHAR(50) NOT NULL,
     faixa_preco ENUM('Econômico','Médio','Alto') NOT NULL,
-    imagem_capa VARCHAR(255)
+    imagem_capa VARCHAR(255),
     servicos TEXT,
     avaliacao_media FLOAT DEFAULT 0,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
