@@ -10,6 +10,7 @@ function url(string $path): string {
 
 // Config DB
 const DB_HOST = '127.0.0.1';
+const DB_PORT = '3306'; // <- Adicione a porta aqui
 const DB_NAME = 'qualaboa';
 const DB_USER = 'root';
 const DB_PASS = '';
@@ -20,14 +21,16 @@ function pdo(): PDO {
     static $pdo;
     if ($pdo instanceof PDO) return $pdo;
 
-    $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+    $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+
     $options = [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
     ];
+
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
-    
+
     return $pdo;
 }
 
