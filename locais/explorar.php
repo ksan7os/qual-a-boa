@@ -14,33 +14,43 @@ $faixa_preco = isset($_GET['faixa_preco']) ? $_GET['faixa_preco'] : '';
 $endereco    = isset($_GET['endereco']) ? $_GET['endereco'] : '';
 $nome        = isset($_GET['nome']) ? $_GET['nome'] : '';
 
-// Consulta base (já trazendo campos usados no card)
+// Consulta base: média calculada ao vivo pela tabela avaliacoes
 $query = "SELECT
-            id_local, nome, tipo, endereco, faixa_preco,
-            avaliacao_media, imagem_capa, horario_funcionamento, servicos
-          FROM locais
+            l.id_local,
+            l.nome,
+            l.tipo,
+            l.endereco,
+            l.faixa_preco,
+            COALESCE(AVG(a.nota), 0) AS avaliacao_media,
+            l.imagem_capa,
+            l.horario_funcionamento,
+            l.servicos
+          FROM locais l
+          LEFT JOIN avaliacoes a ON a.id_local = l.id_local
           WHERE 1=1";
 $params = [];
 
 // Filtros opcionais
 if ($tipo !== '') {
-    $query .= " AND tipo = :tipo";
+    $query .= " AND l.tipo = :tipo";
     $params[':tipo'] = $tipo;
 }
 if ($faixa_preco !== '') {
-    $query .= " AND faixa_preco = :faixa_preco";
+    $query .= " AND l.faixa_preco = :faixa_preco";
     $params[':faixa_preco'] = $faixa_preco;
 }
 if ($endereco !== '') {
-    $query .= " AND endereco LIKE :endereco";
+    $query .= " AND l.endereco LIKE :endereco";
     $params[':endereco'] = "%$endereco%";
 }
 if ($nome !== '') {
-    $query .= " AND nome LIKE :nome";
+    $query .= " AND l.nome LIKE :nome";
     $params[':nome'] = "%$nome%";
 }
 
-// Execução
+$query .= " GROUP BY l.id_local
+            ORDER BY l.nome ASC";
+
 $stmt = $pdo->prepare($query);
 foreach ($params as $k => $v) {
     $stmt->bindValue($k, $v);
@@ -48,7 +58,7 @@ foreach ($params as $k => $v) {
 $stmt->execute();
 $locais = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Tipos para o filtro (coerente com o ENUM)
+// Tipos (ENUM ampliado)
 $tipos = [
     'Restaurante','Bar','Cafeteria','Lanchonete','Pizzaria','Pub','Balada',
     'Parque','Trilha','Praça','Museu','Teatro','Cinema','Show','Evento',
@@ -101,7 +111,7 @@ function split_list($str) {
     <div class="locais-container">
         <?php foreach ($locais as $local): ?>
             <?php
-              // Preparar dados do card
+              // Dados do card
               $img = $local['imagem_capa']
                      ? "../img/capa-locais/" . htmlspecialchars($local['imagem_capa'])
                      : "../img/default-profile.jpg";
@@ -112,16 +122,17 @@ function split_list($str) {
               $end      = htmlspecialchars($local['endereco'] ?? '');
 
               $rating = (float)($local['avaliacao_media'] ?? 0);
-              $rating = max(0, min(5, $rating)); // 0–5
+              $rating = max(0, min(5, $rating));
+              $ratingPct = ($rating/5)*100;
 
-              // Primeiro trecho do horário (até ';' ou quebra de linha)
+              // Primeiro trecho do horário
               $horario_snippet = '';
               if (!empty($local['horario_funcionamento'])) {
                 $parts = preg_split('/[;\n]+/', (string)$local['horario_funcionamento']);
                 $horario_snippet = trim($parts[0] ?? '');
               }
 
-              // Serviços: 3 primeiros + "+N"
+              // Serviços: 3 primeiros + “+N”
               $servicos_arr = split_list($local['servicos'] ?? '');
               $serv_preview = array_slice($servicos_arr, 0, 3);
               $serv_extra   = max(0, count($servicos_arr) - 3);
@@ -157,9 +168,7 @@ function split_list($str) {
                 <?php endif; ?>
 
                 <div class="rating-row">
-                  <div class="stars" aria-label="Avaliação <?= number_format($rating,1) ?> de 5">
-                    <span style="width: <?= ($rating/5)*100 ?>%"></span>
-                  </div>
+                  <div class="stars" style="--rating-pct: <?= $ratingPct ?>%;" aria-label="Avaliação <?= number_format($rating,1) ?> de 5"></div>
                   <span class="rating-number"><?= number_format($rating,1) ?></span>
                 </div>
 
