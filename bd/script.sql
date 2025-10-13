@@ -79,3 +79,17 @@ CREATE TABLE locais (
   INDEX idx_locais_faixa (faixa_preco),
   INDEX idx_locais_nome (nome)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Avaliações
+CREATE TABLE avaliacoes (
+  id_avaliacao INT AUTO_INCREMENT PRIMARY KEY,
+  id_usuario   INT NOT NULL,
+  id_local     INT NOT NULL,
+  nota         TINYINT NOT NULL CHECK (nota BETWEEN 1 AND 5),
+  comentario   TEXT NULL,
+  criado_em    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_avaliacoes_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+  CONSTRAINT fk_avaliacoes_local   FOREIGN KEY (id_local)   REFERENCES locais(id_local)   ON DELETE CASCADE,
+  UNIQUE KEY unq_user_local (id_usuario, id_local)  -- 1 avaliação por usuário por local
+);

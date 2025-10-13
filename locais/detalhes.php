@@ -1,6 +1,8 @@
 <?php
-// locais/detalhes.php — RF07 com todos os campos do CRUD
-require __DIR__ . '/../bd/conexao.php';
+// locais/detalhes.php — RF07 (detalhes) + RF09 (avaliações)
+require_once __DIR__ . '/../bd/conexao.php';
+require_once __DIR__ . '/../bd/auth.php';
+
 $pdo = pdo();
 if (!$pdo) { die("Erro de conexão com o banco de dados."); }
 
@@ -11,7 +13,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 }
 $id_local = (int)$_GET['id'];
 
-// 2) busca
+// 2) busca do local
 try {
   $stmt = $pdo->prepare("SELECT * FROM locais WHERE id_local = :id");
   $stmt->bindValue(':id', $id_local, PDO::PARAM_INT);
@@ -23,7 +25,7 @@ try {
   exit;
 }
 
-// 3) preparação dos dados (com fallback para evitar avisos)
+// 3) dados para exibição
 $nome        = htmlspecialchars($local['nome'] ?? '');
 $tipo        = htmlspecialchars($local['tipo'] ?? '');
 $descricao   = nl2br(htmlspecialchars($local['descricao'] ?? ''));
@@ -39,7 +41,7 @@ $avaliacao   = number_format((float)($local['avaliacao_media'] ?? 0), 1);
 
 $imagem_capa = "../img/capa-locais/" . htmlspecialchars($local['imagem_capa'] ?: 'default-profile.jpg');
 
-// helpers de exibição
+// helpers
 function explode_list($str) {
   if (!$str) return [];
   $parts = array_map('trim', explode(',', $str));
@@ -49,7 +51,7 @@ function explode_list($str) {
 // serviços como chips
 $servicos = array_map('htmlspecialchars', explode_list($servicos_raw));
 
-// redes sociais: torna links clicáveis (se não tiver http, adiciona)
+// redes sociais clicáveis
 $redes = explode_list($redes_raw);
 $redes_links = array_map(function($link) {
   $link = trim($link);
@@ -59,12 +61,36 @@ $redes_links = array_map(function($link) {
   return "<a href=\"$href\" target=\"_blank\" rel=\"noopener noreferrer\">$label</a>";
 }, $redes);
 
-// site clicável (opcional)
+// site clicável
 $site_link = '';
 if ($site !== '') {
   $href = htmlspecialchars((preg_match('~^https?://~i', $site) ? $site : "https://$site"));
   $site_link = "<a href=\"$href\" target=\"_blank\" rel=\"noopener noreferrer\">$href</a>";
 }
+
+/* ========================== RF09: avaliações ========================== */
+$id_usuario_logado = current_user_id(); // vem do bd/auth.php
+
+// minha avaliação (para pré-preencher)
+$minha_avaliacao = null;
+if ($id_usuario_logado) {
+  $st = $pdo->prepare("SELECT nota, comentario FROM avaliacoes WHERE id_local = ? AND id_usuario = ?");
+  $st->execute([$id_local, $id_usuario_logado]);
+  $minha_avaliacao = $st->fetch(PDO::FETCH_ASSOC);
+}
+
+// últimas avaliações (com nome do usuário)
+$st2 = $pdo->prepare("
+  SELECT a.nota, a.comentario, a.criado_em, u.nome
+  FROM avaliacoes a
+  JOIN usuario u ON u.id_usuario = a.id_usuario
+  WHERE a.id_local = ?
+  ORDER BY a.criado_em DESC
+  LIMIT 15
+");
+$st2->execute([$id_local]);
+$avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
+/* ===================================================================== */
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -104,6 +130,24 @@ if ($site !== '') {
       .grid { grid-template-columns: 1fr; }
       .hero { height:280px; }
     }
+
+    /* ===== RF09 ===== */
+    .flash   { margin: 12px 0; color:#065f46; background:#ecfdf5; border:1px solid #a7f3d0; padding:8px 10px; border-radius:8px; display:inline-block;}
+    .av-card { margin-top: 24px; padding: 16px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; }
+    .rate-row { display:flex; gap:8px; align-items:center; margin:8px 0 12px; }
+    .stars-input { display:flex; flex-direction: row-reverse; gap:6px; }
+    .stars-input input { display:none; }
+    .stars-input label { font-size: 24px; cursor: pointer; user-select:none; filter: grayscale(25%); transition: transform .1s ease; }
+    .stars-input input:checked ~ label { filter: grayscale(0%); }
+    .stars-input label:hover { transform: scale(1.05); }
+    textarea.av-text { width:100%; min-height:90px; padding:10px; border:1px solid #e5e7eb; border-radius:8px; resize: vertical; }
+    .btn-prim { display:inline-block; border:none; background:#0d6efd; color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .btn-prim:hover { background:#0b5ed7; }
+
+    .av-item { padding:12px 0; border-bottom:1px solid #e5e7eb; }
+    .av-item:last-child { border-bottom:none; }
+    .stars-display { display:flex; gap:2px; }
+    .stars-display .s { font-size:16px; color:#f59e0b; }
   </style>
 </head>
 <body>
@@ -161,6 +205,67 @@ if ($site !== '') {
             <?php endif; ?>
           </div>
         </div>
+
+        <?php if (!empty($_GET['msg'])): ?>
+          <div class="flash"><?= htmlspecialchars($_GET['msg']) ?></div>
+        <?php endif; ?>
+
+        <!-- ==================== RF09: Formulário de avaliação ==================== -->
+        <div class="av-card">
+          <h3>Avaliar este local</h3>
+
+          <?php if ($id_usuario_logado): ?>
+            <form method="POST" action="avaliar.php">
+              <input type="hidden" name="id_local" value="<?= (int)$id_local ?>">
+
+              <div class="rate-row">
+                <span class="muted">Sua nota:</span>
+                <div class="stars-input">
+                  <?php $nota_sel = (int)($minha_avaliacao['nota'] ?? 0); ?>
+                  <?php for ($i=5; $i>=1; $i--): ?>
+                    <input type="radio" id="star<?= $i ?>" name="nota" value="<?= $i ?>" <?= $nota_sel === $i ? 'checked' : '' ?>>
+                    <label for="star<?= $i ?>">★</label>
+                  <?php endfor; ?>
+                </div>
+              </div>
+
+              <textarea name="comentario" class="av-text" placeholder="Conte rapidamente sua experiência (opcional)"><?= htmlspecialchars($minha_avaliacao['comentario'] ?? '') ?></textarea>
+              <br>
+              <button class="btn-prim" type="submit"><?= $minha_avaliacao ? 'Atualizar avaliação' : 'Enviar avaliação' ?></button>
+            </form>
+          <?php else: ?>
+            <p class="muted">Faça login para avaliar este local.</p>
+          <?php endif; ?>
+        </div>
+        <!-- ===================================================================== -->
+
+        <!-- ==================== RF09: Lista de avaliações ====================== -->
+        <div class="av-card">
+          <h3>O que a galera achou</h3>
+
+          <?php if (!$avaliacoes): ?>
+            <p class="muted">Ainda não há avaliações.</p>
+          <?php else: ?>
+            <?php foreach ($avaliacoes as $av): ?>
+              <div class="av-item">
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <strong><?= htmlspecialchars($av['nome']) ?></strong>
+                  <span class="muted">· <?= date('d/m/Y', strtotime($av['criado_em'])) ?></span>
+                </div>
+                <div class="stars-display" aria-label="Nota <?= (int)$av['nota'] ?> de 5">
+                  <?php for ($i=1; $i<=5; $i++): ?>
+                    <span class="s"><?= $i <= (int)$av['nota'] ? '★' : '☆' ?></span>
+                  <?php endfor; ?>
+                  <span class="muted" style="margin-left:6px;"><?= (int)$av['nota'] ?>/5</span>
+                </div>
+                <?php if (!empty($av['comentario'])): ?>
+                  <p style="margin-top:6px;"><?= nl2br(htmlspecialchars($av['comentario'])) ?></p>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+        <!-- ===================================================================== -->
 
         <a href="explorar.php" class="btn-voltar">← Voltar para Explorar</a>
       </div>

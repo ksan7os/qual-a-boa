@@ -134,15 +134,16 @@ body {
   border-color: #e2e8f0;
 }
 
-/* Endereço e Horário (com truncamento elegante) */
+/* Endereço e Horário (truncado em 2 linhas sem webkit) */
 .local-address,
 .local-hours {
   font-size: 13px;
   color: #4b5563;
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
+  line-height: 1.4;           /* 1.4em por linha */
+  max-height: calc(1.4em * 2);/* até 2 linhas */
   overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
 }
 .icon { margin-right: 6px; }
 
@@ -171,6 +172,33 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+/* Indicador de estrelas (sem prefixos) */
+.stars {
+  position: relative;
+  display: inline-block;
+  font-size: 16px;     /* tamanho das estrelas */
+  line-height: 1;
+  letter-spacing: 2px;
+  height: 1em;
+}
+.stars::before {
+  content: "★★★★★";
+  color: #e5e7eb;      /* base cinza */
+}
+.stars::after {
+  content: "★★★★★";
+  color: #f59e0b;      /* preenchimento dourado */
+  position: absolute;
+  top: 0; left: 0;
+  width: var(--rating-pct, 0%); /* setado inline no HTML */
+  overflow: hidden;
+  white-space: nowrap;
+}
+.rating-number {
+  font-size: 13px;
+  color: #374151;
 }
 
 /* CTA */
