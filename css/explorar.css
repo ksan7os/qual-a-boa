@@ -1,34 +1,29 @@
-/* Resetando margens e padding para um layout mais consistente */
+/* =============== Reset básico =============== */
 * {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Estilo do body para centralizar o conteúdo verticalmente */
+/* =============== Base =============== */
 body {
-    font-family: system-ui, Arial;
-    display: flexbox; 
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center;     /* Centraliza verticalmente */
-    min-height: 100vh;       /* Garante que o conteúdo ocupe a altura total da tela */
-    padding: 24px;
-    background-color: #f4f4f4; /* Cor de fundo para suavizar */
+  font-family: system-ui, Arial, sans-serif;
+  background-color: #f4f4f4;
+  padding: 24px;
 }
 
-/* Estilo dos botões de link (para redirecionamento) */
+/* Botão/link neutro */
 .link-button {
-    display: inline-block;
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    text-decoration: none;
-    color: #006eff;
-    text-align: center;
+  display: inline-block;
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #006eff;
+  text-align: center;
 }
 
-/* ====== Página Explorar ====== */
-
-/* Container dos filtros */
+/* =============== Filtros (topo) =============== */
 .filters-container {
   width: 100%;
   max-width: 1000px;
@@ -62,79 +57,148 @@ body {
   cursor: pointer;
   transition: 0.2s;
 }
-
 .filters-form button:hover {
   background: #0056cc;
 }
 
-/* Grid de locais */
+/* =============== Grid de Locais =============== */
 .locais-container {
   width: 100%;
   max-width: 1000px;
   margin: 30px auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 20px;
 }
 
-/* Cartão de local */
+/* =============== Card do Local (versão rica) =============== */
 .local-card {
   background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   overflow: hidden;
-  transition: transform 0.2s ease;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-
 .local-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.10);
 }
 
+/* Imagem de capa */
 .local-image {
   width: 100%;
   height: 180px;
   object-fit: cover;
+  display: block;
 }
 
-.local-card h3 {
+/* Corpo do card */
+.local-body {
+  padding: 12px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Título */
+.local-title {
   font-size: 18px;
-  margin: 12px;
-  color: #333;
+  color: #1d1f23;
+  margin: 4px 0 2px;
 }
 
-.local-card p {
-  font-size: 14px;
-  color: #666;
-  margin: 4px 12px;
+/* Badges (tipo e preço) */
+.badges-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  border: 1px solid transparent;
+}
+.badge-type {
+  background: #eef4ff;
+  color: #1d4ed8;
+  border-color: #dbe7ff;
+}
+.badge-preco {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: #e2e8f0;
 }
 
-/* Avaliação destacada */
-.local-card p:last-child {
-  font-weight: bold;
-  color: #444;
-  margin-bottom: 12px;
+/* Endereço e Horário (com truncamento elegante) */
+.local-address,
+.local-hours {
+  font-size: 13px;
+  color: #4b5563;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.icon { margin-right: 6px; }
+
+/* Chips de serviços */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #f6faff;
+  color: #0f47c0;
+  border: 1px solid #e5efff;
+}
+.chip-more {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
 }
 
-/* Botão "Ver detalhes" */
+/* Avaliação em estrelas + número */
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* CTA */
 .btn-detalhes {
   display: inline-block;
-  margin: 12px;
-  margin-top: auto;
-  padding: 8px 16px;
+  margin-top: 6px;
+  padding: 9px 14px;
   background-color: #0078ff;
   color: #fff;
-  border-radius: 6px;
+  border-radius: 8px;
   text-align: center;
   text-decoration: none;
   font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  transition: background-color .25s ease, transform .18s ease;
 }
-
 .btn-detalhes:hover {
   background-color: #005fcc;
   transform: translateY(-2px);
+}
+
+/* =============== Responsivo =============== */
+@media (max-width: 520px) {
+  .filters-form input,
+  .filters-form select,
+  .filters-form button {
+    min-width: 100%;
+    flex: 1 0 100%;
+  }
+  .local-image { height: 160px; }
 }

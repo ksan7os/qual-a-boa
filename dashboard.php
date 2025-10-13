@@ -25,7 +25,13 @@ $nome = $row ? $row['nome'] : ($_SESSION['user_name'] ?? 'Usuário');
     <p>Qual a boa de hoje? </p>
     <a class="link-button" href="<?= url('auth/perfil.php') ?>">Perfil</a>
     <a class="link-button" href="<?= url('locais/explorar.php') ?>">Locais</a>
-    <a class="link-button" href="<?= url('locais/crud.php') ?>">Painel do Administrador</a>
+
+    <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
+
+    <?php if (!empty($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+      <a class="link-button" href="<?= url('locais/crud/listar.php') ?>">Painel do Administrador</a>
+    <?php endif; ?>
+
     <a class="link-button" href="<?= url('auth/logout.php') ?>">Sair</a>
   </div>
 </body>

@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             // 🔹 Redirecionamento baseado no tipo de usuário
             if ($user['tipo_usuario'] === 'admin') {
-                header('Location: ' . url('locais/crud.php')); // ajuste o caminho se necessário
+                header('Location: ' . url('locais/crud/listar.php')); // ajuste o caminho se necessário
             } else {
                 header('Location: ' . url('dashboard.php'));
             }

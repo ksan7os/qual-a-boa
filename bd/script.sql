@@ -1,15 +1,10 @@
--- Visualizar as tabelas:
-USE qualaboa;
-SELECT * FROM nome_tabela; -- Mudar para o nome da tabela
-
 CREATE DATABASE IF NOT EXISTS qualaboa
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
-
 USE qualaboa;
 
+-- Usuários
 DROP TABLE IF EXISTS usuario;
-
 CREATE TABLE usuario (
   id_usuario INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -20,32 +15,67 @@ CREATE TABLE usuario (
   foto_perfil VARCHAR(255) DEFAULT 'default-profile.jpg'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-INSERT INTO usuario (nome, email, senha, tipo_usuario)
-VALUES (
-    'Administrador',
-    'admin@qualaboa.com',
-    '$2y$10$m.yk9gZS7WSrIOKY7bpG9.IK1Sq/FNkwGzsp3j6aVs1kVx0axqFOG', -- Senha: admin
-    'admin'
-);
+-- Admin padrão (senha: admin)
+INSERT INTO usuario (nome, email, senha, tipo_usuario) VALUES
+('Administrador','admin@qualaboa.com',
+'$2y$10$m.yk9gZS7WSrIOKY7bpG9.IK1Sq/FNkwGzsp3j6aVs1kVx0axqFOG','admin');
 
-CREATE TABLE IF NOT EXISTS password_resets (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    token VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+-- Resets de senha
+DROP TABLE IF EXISTS password_resets;
+CREATE TABLE password_resets (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  token VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_password_resets_usuario
     FOREIGN KEY (user_id) REFERENCES usuario(id_usuario) ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE IF NOT EXISTS locais (
-    id_local INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    tipo ENUM('Restaurante','Bar','Parque','Evento','Museu','Outro') NOT NULL, 
-    regiao VARCHAR(50) NOT NULL,
-    faixa_preco ENUM('Econômico','Médio','Alto') NOT NULL,
-    imagem_capa VARCHAR(255),
-    servicos TEXT,
-    avaliacao_media FLOAT DEFAULT 0,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+-- Locais
+DROP TABLE IF EXISTS locais;
+CREATE TABLE locais (
+  id_local INT AUTO_INCREMENT PRIMARY KEY,
+
+  -- Nome e classificação geral
+  nome VARCHAR(120) NOT NULL,
+  tipo ENUM(
+    'Restaurante','Bar','Cafeteria','Lanchonete','Pizzaria',
+    'Parque','Praça','Museu','Teatro','Show','Evento',
+    'Feira','Mercado','Atração Turística','Outro'
+  ) NOT NULL,
+
+  -- Sobre
+  descricao TEXT,
+
+  -- Localização (endereço completo)
+  endereco VARCHAR(255) NOT NULL,
+
+  -- Faixa de preço
+  faixa_preco ENUM('Econômico','Médio','Alto') NOT NULL,
+
+  -- Horário de funcionamento (ex.: "Seg–Sex 12h–22h; Sáb–Dom 11h–23h")
+  horario_funcionamento TEXT,
+
+  -- Contatos
+  site VARCHAR(255),
+  telefone VARCHAR(25),
+  email_contato VARCHAR(120),
+  redes_sociais TEXT,
+
+  -- Serviços
+  servicos TEXT,
+
+  -- Mídia e avaliação
+  imagem_capa VARCHAR(255),
+  avaliacao_media FLOAT DEFAULT 0,
+
+  -- Auditoria
+  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  -- Índices úteis
+  INDEX idx_locais_tipo (tipo),
+  INDEX idx_locais_faixa (faixa_preco),
+  INDEX idx_locais_nome (nome)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
