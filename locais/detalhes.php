@@ -86,7 +86,6 @@ $st2 = $pdo->prepare("
   JOIN usuario u ON u.id_usuario = a.id_usuario
   WHERE a.id_local = ?
   ORDER BY a.criado_em DESC
-  LIMIT 15
 ");
 $st2->execute([$id_local]);
 $avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
