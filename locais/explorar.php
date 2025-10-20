@@ -1,36 +1,48 @@
 <?php
 // locais/explorar.php
 
-// Conexão
 require __DIR__ . '/../bd/conexao.php';
 $pdo = pdo();
 if (!$pdo) {
     die("Erro de conexão com o banco de dados.");
 }
 
-// Filtros
-$tipo        = isset($_GET['tipo']) ? $_GET['tipo'] : '';
-$faixa_preco = isset($_GET['faixa_preco']) ? $_GET['faixa_preco'] : '';
-$endereco    = isset($_GET['endereco']) ? $_GET['endereco'] : '';
-$nome        = isset($_GET['nome']) ? $_GET['nome'] : '';
+// ====== Filtros ======
+$tipo        = $_GET['tipo']        ?? '';
+$faixa_preco = $_GET['faixa_preco'] ?? '';
+$endereco    = $_GET['endereco']    ?? '';
+$nome        = $_GET['nome']        ?? '';
+$ordenar     = $_GET['ordenar']     ?? 'nome';
 
-// Consulta base: média calculada ao vivo pela tabela avaliacoes
-$query = "SELECT
-            l.id_local,
-            l.nome,
-            l.tipo,
-            l.endereco,
-            l.faixa_preco,
-            COALESCE(AVG(a.nota), 0) AS avaliacao_media,
-            l.imagem_capa,
-            l.horario_funcionamento,
-            l.servicos
-          FROM locais l
-          LEFT JOIN avaliacoes a ON a.id_local = l.id_local
-          WHERE 1=1";
+// ====== Query base ======
+$query = "
+SELECT
+  l.id_local,
+  l.nome,
+  l.tipo,
+  l.endereco,
+  l.faixa_preco,
+  l.horario_funcionamento,
+  l.servicos,
+  l.imagem_capa,
+  COALESCE(AVG(a.nota), 0) AS avaliacao_media,
+  COUNT(a.id_avaliacao) AS total_avaliacoes,
+
+  -- Cálculo de popularidade (modelo IMDb)
+  (
+    (COUNT(a.id_avaliacao) / (COUNT(a.id_avaliacao) + 50)) * COALESCE(AVG(a.nota), 0)
+    +
+    (50 / (COUNT(a.id_avaliacao) + 50)) * (SELECT AVG(nota) FROM avaliacoes)
+  ) AS popularidade
+
+FROM locais l
+LEFT JOIN avaliacoes a ON a.id_local = l.id_local
+WHERE 1=1
+";
+
 $params = [];
 
-// Filtros opcionais
+// ====== Aplicação dos filtros ======
 if ($tipo !== '') {
     $query .= " AND l.tipo = :tipo";
     $params[':tipo'] = $tipo;
@@ -48,8 +60,20 @@ if ($nome !== '') {
     $params[':nome'] = "%$nome%";
 }
 
-$query .= " GROUP BY l.id_local
-            ORDER BY l.nome ASC";
+$query .= " GROUP BY l.id_local ";
+
+// ====== Ordenação ======
+switch ($ordenar) {
+    case 'avaliacao':
+        $query .= " ORDER BY avaliacao_media DESC";
+        break;
+    case 'popularidade':
+        $query .= " ORDER BY popularidade DESC";
+        break;
+    default:
+        $query .= " ORDER BY l.nome ASC";
+        break;
+}
 
 $stmt = $pdo->prepare($query);
 foreach ($params as $k => $v) {
@@ -58,14 +82,14 @@ foreach ($params as $k => $v) {
 $stmt->execute();
 $locais = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Tipos (ENUM ampliado)
+// ====== Tipos (ENUM ampliado) ======
 $tipos = [
     'Restaurante','Bar','Cafeteria','Lanchonete','Pizzaria','Pub','Balada',
     'Parque','Trilha','Praça','Museu','Teatro','Cinema','Show','Evento',
     'Feira','Mercado','Centro Cultural','Atração Turística','Outro'
 ];
 
-// Helper rápido
+// ====== Helper para exibir serviços ======
 function split_list($str) {
     if (!$str) return [];
     $parts = array_map('trim', explode(',', (string)$str));
@@ -80,7 +104,7 @@ function split_list($str) {
     <link rel="stylesheet" href="../css/explorar.css">
 </head>
 <body>
-    <!-- Filtros -->
+    <!-- ====== Filtros ====== -->
     <div class="filters-container">
         <form method="GET" class="filters-form">
             <input type="text" name="nome" placeholder="Nome do local" value="<?= htmlspecialchars($nome) ?>">
@@ -103,15 +127,21 @@ function split_list($str) {
 
             <input type="text" name="endereco" placeholder="Localização (endereço, bairro, rua...)" value="<?= htmlspecialchars($endereco) ?>">
 
+            <!-- ====== NOVO: Ordenação ====== -->
+            <select name="ordenar" onchange="this.form.submit()">
+                <option value="nome" <?= $ordenar === 'nome' ? 'selected' : '' ?>>A–Z</option>
+                <option value="avaliacao" <?= $ordenar === 'avaliacao' ? 'selected' : '' ?>>Melhor avaliados</option>
+                <option value="popularidade" <?= $ordenar === 'popularidade' ? 'selected' : '' ?>>Mais populares</option>
+            </select>
+
             <button type="submit">Aplicar Filtros</button>
         </form>
     </div>
 
-    <!-- Grid de locais -->
+    <!-- ====== Grid de Locais ====== -->
     <div class="locais-container">
         <?php foreach ($locais as $local): ?>
             <?php
-              // Dados do card
               $img = $local['imagem_capa']
                      ? "../img/capa-locais/" . htmlspecialchars($local['imagem_capa'])
                      : "../img/default-profile.jpg";
@@ -123,16 +153,16 @@ function split_list($str) {
 
               $rating = (float)($local['avaliacao_media'] ?? 0);
               $rating = max(0, min(5, $rating));
-              $ratingPct = ($rating/5)*100;
+              $ratingPct = ($rating / 5) * 100;
 
-              // Primeiro trecho do horário
+              $pop = number_format((float)($local['popularidade'] ?? 0), 2);
+
               $horario_snippet = '';
               if (!empty($local['horario_funcionamento'])) {
                 $parts = preg_split('/[;\n]+/', (string)$local['horario_funcionamento']);
                 $horario_snippet = trim($parts[0] ?? '');
               }
 
-              // Serviços: 3 primeiros + “+N”
               $servicos_arr = split_list($local['servicos'] ?? '');
               $serv_preview = array_slice($servicos_arr, 0, 3);
               $serv_extra   = max(0, count($servicos_arr) - 3);
@@ -170,6 +200,7 @@ function split_list($str) {
                 <div class="rating-row">
                   <div class="stars" style="--rating-pct: <?= $ratingPct ?>%;" aria-label="Avaliação <?= number_format($rating,1) ?> de 5"></div>
                   <span class="rating-number"><?= number_format($rating,1) ?></span>
+                  <span class="popularity-number">⭐ Pop: <?= $pop ?></span>
                 </div>
 
                 <a href="detalhes.php?id=<?= (int)$local['id_local'] ?>" class="btn-detalhes">Ver detalhes</a>
