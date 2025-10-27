@@ -416,3 +416,27 @@ input[type="file"]::file-selector-button {
 .btn-voltar:hover {
   background: #005fcc;
 }
+
+.btn-ir {
+  display: inline-block;
+  background: #0d6efd;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background .2s ease;
+}
+
+.btn-ir:hover {
+  background: #0b5ed7;
+}
+
+.btn-ir-disabled {
+  display: inline-block;
+  background: #e0e7ff;
+  color: #1e40af;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 500;
+}
