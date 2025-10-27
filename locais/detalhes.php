@@ -1,8 +1,11 @@
 <?php
-// locais/detalhes.php — RF07 (detalhes) + RF09 (avaliações)
+// locais/detalhes.php — RF07 (detalhes) + RF08 (estou indo) + RF09 (avaliações)
 require_once __DIR__ . '/../bd/conexao.php';
 require_once __DIR__ . '/../bd/auth.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $pdo = pdo();
 if (!$pdo) { die("Erro de conexão com o banco de dados."); }
 
@@ -38,7 +41,6 @@ $email       = htmlspecialchars($local['email_contato'] ?? '');
 $redes_raw   = trim($local['redes_sociais'] ?? '');
 $servicos_raw= trim($local['servicos'] ?? '');
 $avaliacao   = number_format((float)($local['avaliacao_media'] ?? 0), 1);
-
 $imagem_capa = "../img/capa-locais/" . htmlspecialchars($local['imagem_capa'] ?: 'default-profile.jpg');
 
 // helpers
@@ -71,6 +73,19 @@ if ($site !== '') {
 /* ========================== RF09: avaliações ========================== */
 $id_usuario_logado = current_user_id(); // vem do bd/auth.php
 
+// RF08 — verificar se o usuário já marcou esse local
+$ja_indo = false;
+if ($id_usuario_logado) {
+  $st = $pdo->prepare("
+    SELECT 1 FROM estou_indo 
+    WHERE id_usuario = :u 
+      AND id_local = :l 
+      AND TIMESTAMPDIFF(HOUR, data_marcacao, NOW()) < 12
+  ");
+  $st->execute([':u' => $id_usuario_logado, ':l' => $id_local]);
+  $ja_indo = $st->fetchColumn() > 0;
+}
+
 // minha avaliação (para pré-preencher)
 $minha_avaliacao = null;
 if ($id_usuario_logado) {
@@ -89,6 +104,15 @@ $st2 = $pdo->prepare("
 ");
 $st2->execute([$id_local]);
 $avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
+/* ===================================================================== */
+
+/* ========================== RF08: Estou indo ========================== */
+$jaMarcou = false;
+if ($id_usuario_logado) {
+  $stmtCheck = $pdo->prepare("SELECT 1 FROM estou_indo WHERE id_usuario = :u AND id_local = :l");
+  $stmtCheck->execute([':u' => $id_usuario_logado, ':l' => $id_local]);
+  $jaMarcou = $stmtCheck->rowCount() > 0;
+}
 /* ===================================================================== */
 ?>
 <!DOCTYPE html>
@@ -125,13 +149,39 @@ $avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
       padding:10px 16px; border-radius:10px; text-decoration:none;
     }
     .btn-voltar:hover { background:#0b5ed7; }
+
+    /* RF08 */
+    .btn-ir {
+      display:inline-block;
+      background:#22c55e;
+      color:#fff;
+      font-weight:600;
+      font-size:1rem;
+      padding:10px 18px;
+      border-radius:10px;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(34,197,94,0.4);
+      transition:all .2s ease;
+      margin: 12px 0;
+    }
+    .btn-ir:hover { background:#16a34a; }
+    .btn-ir-disabled {
+      display:inline-block;
+      background:#e2e8f0;
+      color:#475569;
+      font-weight:600;
+      font-size:1rem;
+      padding:10px 18px;
+      border-radius:10px;
+      margin: 12px 0;
+    }
+    .flash { margin: 12px 0; color:#065f46; background:#ecfdf5; border:1px solid #a7f3d0; padding:8px 10px; border-radius:8px; display:inline-block;}
     @media (max-width: 900px) {
       .grid { grid-template-columns: 1fr; }
       .hero { height:280px; }
     }
 
     /* ===== RF09 ===== */
-    .flash   { margin: 12px 0; color:#065f46; background:#ecfdf5; border:1px solid #a7f3d0; padding:8px 10px; border-radius:8px; display:inline-block;}
     .av-card { margin-top: 24px; padding: 16px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; }
     .rate-row { display:flex; gap:8px; align-items:center; margin:8px 0 12px; }
     .stars-input { display:flex; flex-direction: row-reverse; gap:6px; }
@@ -162,6 +212,29 @@ $avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
           <span><strong>Preço:</strong> <?= $faixa ?: '—' ?></span>
           <span><strong>Avaliação:</strong> <?= $avaliacao ?>/5</span>
         </div>
+
+        <?php
+        // feedback (RF08)
+        if (isset($_SESSION['flash_msg'])) {
+          echo '<div class="flash">' . htmlspecialchars($_SESSION['flash_msg']) . '</div>';
+          unset($_SESSION['flash_msg']);
+        }
+        ?>
+
+        <!-- Botão "Estou indo" (RF08) -->
+        <?php if ($id_usuario_logado): ?>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <?php if (!$jaMarcou): ?>
+              <a href="ir.php?id_local=<?= $id_local ?>" class="btn-ir">🚶 Estou indo</a>
+            <?php else: ?>
+              <div class="btn-ir-disabled">✔ Você marcou que vai</div>
+              <a href="ir.php?id_local=<?= $id_local ?>&acao=cancelar" 
+                class="btn-ir" style="background: #dc2626;">✖ Cancelar ida</a>
+            <?php endif; ?>
+          </div>
+        <?php else: ?>
+          <p class="muted">Faça login para marcar “Estou indo”.</p>
+        <?php endif; ?>
 
         <div class="grid">
           <!-- coluna esquerda -->
@@ -208,7 +281,7 @@ $avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
         <?php if (!empty($_GET['msg'])): ?>
           <div class="flash"><?= htmlspecialchars($_GET['msg']) ?></div>
         <?php endif; ?>
-
+        
         <!-- ==================== RF09: Formulário de avaliação ==================== -->
         <div class="av-card">
           <h3>Avaliar este local</h3>
