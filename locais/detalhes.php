@@ -281,7 +281,14 @@ if ($id_usuario_logado) {
         <?php if (!empty($_GET['msg'])): ?>
           <div class="flash"><?= htmlspecialchars($_GET['msg']) ?></div>
         <?php endif; ?>
-        
+
+        <?php 
+        // Em detalhes.php, antes do form:
+        $minha = $pdo->prepare("SELECT nota, comentario FROM avaliacoes WHERE id_usuario = :u AND id_local = :l LIMIT 1");
+        $minha->execute([':u' => $_SESSION['user_id'], ':l' => $id_local]);
+        $minhaAvaliacao = $minha->fetch(PDO::FETCH_ASSOC);
+        ?>
+
         <!-- ==================== RF09: Formulário de avaliação ==================== -->
         <div class="av-card">
           <h3>Avaliar este local</h3>

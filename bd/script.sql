@@ -163,3 +163,12 @@ INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- New Mercadito – 
 (21,5,2),(22,5,3),(23,5,2),(24,5,3),(25,5,2);
 INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- Vila Tarêgo – 10 avaliações, todas 5⭐ (nota máxima, popularidade média)
 (1,6,5),(2,6,5),(4,6,5),(5,6,5),(6,6,5),(7,6,5),(8,6,5),(9,6,5),(10,6,5);
+
+-- Modificação na tabela para o RF10
+UPDATE locais l
+JOIN (
+  SELECT id_local, COALESCE(AVG(nota),0) AS media
+  FROM avaliacoes
+  GROUP BY id_local
+) a ON a.id_local = l.id_local
+SET l.avaliacao_media = a.media;
