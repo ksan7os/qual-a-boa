@@ -95,8 +95,8 @@ $avaliacoes = $stmtAval->fetchAll(PDO::FETCH_ASSOC);
   <title>Meu histórico — Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- CSS base do projeto -->
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/explorar.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/explorar.css">
   <style>
     .section {
       width: 100%;
@@ -210,7 +210,7 @@ $avaliacoes = $stmtAval->fetchAll(PDO::FETCH_ASSOC);
     </section>
 
     <div style="margin-top:10px;">
-      <a class="link-button" href="/index.php">Voltar ao início</a>
+      <a class="link-button" href="../auth/perfil.php">Voltar</a>
     </div>
   </div>
 

@@ -1,174 +1,389 @@
+-- Criação do banco
+CREATE DATABASE IF NOT EXISTS `qualaboa`
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+USE `qualaboa`;
+
+-- ==================================================================================
+-- Tabelas-mãe (criadas primeiro)
+-- ==================================================================================
+
+-- Usuário
+DROP TABLE IF EXISTS `usuario`;
+CREATE TABLE `usuario` (
+  `id_usuario` INT(11) NOT NULL AUTO_INCREMENT,
+  `nome`       VARCHAR(100) NOT NULL,
+  `email`      VARCHAR(120) NOT NULL,
+  `senha`      VARCHAR(255) NOT NULL,
+  `tipo_usuario` ENUM('admin','usuario') NOT NULL DEFAULT 'usuario',
+  `data_criacao` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `foto_perfil`  VARCHAR(255) DEFAULT 'default-profile.jpg',
+  PRIMARY KEY (`id_usuario`),
+  UNIQUE KEY `uk_usuario_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Locais
+DROP TABLE IF EXISTS `locais`;
+CREATE TABLE `locais` (
+  `id_local` INT(11) NOT NULL AUTO_INCREMENT,
+  `nome`     VARCHAR(120) NOT NULL,
+  `tipo`     ENUM(
+               'Restaurante','Bar','Cafeteria','Lanchonete','Pizzaria','Pub','Balada',
+               'Parque','Trilha','Praça','Museu','Teatro','Cinema','Show','Evento',
+               'Feira','Mercado','Centro Cultural','Atração Turística','Outro'
+             ) NOT NULL,
+  `descricao`              TEXT DEFAULT NULL,
+  `endereco`               VARCHAR(255) NOT NULL,
+  `faixa_preco`            ENUM('Econômico','Médio','Alto') NOT NULL,
+  `horario_funcionamento`  TEXT DEFAULT NULL,
+  `site`                   VARCHAR(255) DEFAULT NULL,
+  `telefone`               VARCHAR(25)  DEFAULT NULL,
+  `email_contato`          VARCHAR(120) DEFAULT NULL,
+  `redes_sociais`          TEXT DEFAULT NULL,
+  `servicos`               TEXT DEFAULT NULL,
+  `imagem_capa`            VARCHAR(255) DEFAULT NULL,
+  `avaliacao_media`        FLOAT DEFAULT 0,
+  `criado_em`              TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `atualizado_em`          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_local`),
+  KEY `idx_locais_tipo` (`tipo`),
+  KEY `idx_locais_faixa` (`faixa_preco`),
+  KEY `idx_locais_nome`  (`nome`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ==================================================================================
+-- Tabelas-filhas (dependem das de cima)
+-- ==================================================================================
+
+-- Avaliações
+DROP TABLE IF EXISTS `avaliacoes`;
+CREATE TABLE `avaliacoes` (
+  `id_avaliacao`  INT(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario`    INT(11) NOT NULL,
+  `id_local`      INT(11) NOT NULL,
+  `nota`          TINYINT(4) NOT NULL CHECK (`nota` BETWEEN 1 AND 5),
+  `comentario`    TEXT DEFAULT NULL,
+  `criado_em`     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `atualizado_em` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_avaliacao`),
+  UNIQUE KEY `unq_avaliacoes_usuario_local` (`id_usuario`,`id_local`),
+  KEY `fk_avaliacoes_local` (`id_local`),
+  CONSTRAINT `fk_avaliacoes_usuario`
+    FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
+  CONSTRAINT `fk_avaliacoes_local`
+    FOREIGN KEY (`id_local`)   REFERENCES `locais`  (`id_local`)   ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Estou Indo
+DROP TABLE IF EXISTS `estou_indo`;
+CREATE TABLE `estou_indo` (
+  `id_estou_indo`     INT(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario`        INT(11) NOT NULL,
+  `id_local`          INT(11) NOT NULL,
+  `data_marcacao`     DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `desmarcado_em`     DATETIME DEFAULT NULL,
+  `desmarcado_motivo` ENUM('auto','manual') DEFAULT NULL,
+  PRIMARY KEY (`id_estou_indo`),
+  KEY `fk_estou_indo_local` (`id_local`),
+  KEY `idx_ei_usuario_ativo` (`id_usuario`,`desmarcado_em`),
+  CONSTRAINT `fk_estou_indo_usuario`
+    FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
+  CONSTRAINT `fk_estou_indo_local`
+    FOREIGN KEY (`id_local`)   REFERENCES `locais`  (`id_local`)   ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Feed Feedback
+DROP TABLE IF EXISTS `feed_feedback`;
+CREATE TABLE `feed_feedback` (
+  `id`         BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `id_usuario` INT(11)    NOT NULL,
+  `id_local`   INT(11)    NOT NULL,
+  `acao`       ENUM('view','skip','open','like') NOT NULL,
+  `criado_em`  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_user_local` (`id_usuario`,`id_local`),
+  KEY `idx_user_time`  (`id_usuario`,`criado_em`),
+  CONSTRAINT `fk_ff_usuario`
+    FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE,
+  CONSTRAINT `fk_ff_local`
+    FOREIGN KEY (`id_local`)   REFERENCES `locais`  (`id_local`)   ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- User Preferences
+DROP TABLE IF EXISTS `user_preferences`;
+CREATE TABLE `user_preferences` (
+  `id_usuario`   INT(11) NOT NULL,
+  `tipos_csv`    VARCHAR(255) DEFAULT NULL,
+  `horarios_json` LONGTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL
+                   CHECK (JSON_VALID(`horarios_json`)),
+  PRIMARY KEY (`id_usuario`),
+  CONSTRAINT `fk_up_usuario`
+    FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Password Resets
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE `password_resets` (
+  `id`         INT(11) NOT NULL AUTO_INCREMENT,
+  `user_id`    INT(11) NOT NULL,
+  `token`      VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_password_resets_usuario` (`user_id`),
+  CONSTRAINT `fk_password_resets_usuario`
+    FOREIGN KEY (`user_id`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ==================================================================================
+-- Inserção dos dados
+-- ==================================================================================
+
+-- Admin
+INSERT INTO usuario (nome, email, senha, tipo_usuario)
+VALUES ('Administrador','admin@qualaboa.com',
+'$2y$10$m.yk9gZS7WSrIOKY7bpG9.IK1Sq/FNkwGzsp3j6aVs1kVx0axqFOG','admin'); -- Senha: admin
+
+-- Locais
+INSERT INTO locais
+(id_local, nome, tipo, descricao, endereco, faixa_preco, horario_funcionamento, site, telefone, email_contato, redes_sociais, servicos, imagem_capa, avaliacao_media, criado_em, atualizado_em)
+VALUES
+(NULL, 'Varanda do Lago', 'Restaurante',
+ 'Culinária brasileira com foco em peixes e frutos do mar. Ambiente amplo com vista para o lago e mesas externas.',
+ 'QI 15 Conjunto 3, Lago Sul, Brasília, DF 71635-000', 'Alto',
+ 'Seg-Qui 12:00 – 15:30 / 18:00 – 23:00; Sex-Dom 12:00 – 23:30',
+ 'https://varandadolago.com.br', '+55 61 3540-2200', 'contato@varandadolago.com.br',
+ 'https://instagram.com/varandadolago',
+ 'Reservas, Vinho e cerveja, Mesas ao ar livre, Estacionamento, Acesso para cadeirantes, Cartões',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Esquina 209', 'Bar',
+ 'Drinks autorais e porções para compartilhar. Música ambiente e promoções no happy hour.',
+ 'CLS 209 Bloco C, Loja 18 - Asa Sul, Brasília, DF 70273-530', 'Médio',
+ 'Ter-Sáb 17:30 – 01:00; Dom 17:00 – 23:00',
+ NULL, '+55 61 3569-0209', 'contato@esquina209.com',
+ 'https://instagram.com/esquina209',
+ 'Bar completo, Mesas ao ar livre, Cartões, Pet friendly, Para levar',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Grão Cerrado', 'Cafeteria',
+ 'Torras próprias e métodos filtrados; cardápio com brunch, sanduíches e doces de produção diária.',
+ 'CLN 206 Bloco B, Loja 05 - Asa Norte, Brasília, DF 70844-520', 'Econômico',
+ 'Seg-Sex 08:00 – 20:00; Sáb 09:00 – 19:00; Dom 09:00 – 15:00',
+ 'https://graocerrado.com', '+55 61 3222-6620', 'oi@graocerrado.com',
+ 'https://instagram.com/graocerrado',
+ 'Wi-fi gratuito, Opções veganas, Acesso para cadeirantes, Cartões',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Mama Nona', 'Pizzaria',
+ 'Pizzas de fermentação lenta com ingredientes importados e sabores autorais. Opções vegetarianas e sem glúten.',
+ 'AD Sul QD 08, Loja 10 - Águas Claras, Brasília, DF', 'Médio',
+ 'Ter-Dom 18:00 – 23:30',
+ 'https://mamanona.com.br', '+55 61 3255-4040', 'pedido@mamanona.com.br',
+ 'https://instagram.com/pizzeriamamanona',
+ 'Entrega, Para levar, Cartões, Vinho e cerveja, Mesas ao ar livre',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Parque Veredas', 'Parque',
+ 'Área verde com pista de cooper, aparelhos de ginástica e espaços para piquenique. Ideal para famílias.',
+ 'EPIG Área Especial Parque Veredas - Brasília, DF', 'Econômico',
+ 'Diariamente 06:00 – 20:00',
+ NULL, '+55 61 0000-2222', 'parques@df.gov.br',
+ 'https://instagram.com/parqueveredas',
+ 'Entrada gratuita, Estacionamento, Banheiros, Segurança, Área infantil',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Praça das Jabuticabeiras', 'Praça',
+ 'Praça arborizada com bancos, feirinha de artesanato aos sábados e apresentações de artistas locais.',
+ 'SQN 115 Área Verde - Asa Norte, Brasília, DF', 'Econômico',
+ 'Aberto 24 horas',
+ NULL, '+55 61 0000-3333', 'administracao@bsb.df.gov.br',
+ 'https://instagram.com/pracajabuticabeiras',
+ 'Entrada gratuita, Pet friendly, Mesas ao ar livre, Eventos sazonais',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Trilha do Mirante Norte', 'Trilha',
+ 'Caminhada leve de 3 km até mirante com vista panorâmica. Recomenda-se protetor solar e água.',
+ 'Parque do Mirante Norte – acesso pela DF-003, Brasília, DF', 'Econômico',
+ 'Diariamente 06:00 – 18:00',
+ NULL, '+55 61 0000-4444', 'contato@mirantenorte.df.gov.br',
+ 'https://instagram.com/trilhamirantenorte',
+ 'Entrada gratuita, Guias locais, Estacionamento, Sinalização de trilha',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Mercado da Quadra 112', 'Mercado',
+ 'Mercado de bairro com bancas de alimentos orgânicos, queijos artesanais e floricultura.',
+ 'SQS 112 Área Comercial - Asa Sul, Brasília, DF', 'Econômico',
+ 'Seg-Sáb 08:00 – 20:00; Dom 08:00 – 14:00',
+ NULL, '+55 61 3344-0112', 'info@mercado112.com',
+ 'https://instagram.com/mercado112',
+ 'Cartões, Estacionamento, Área coberta, Acesso para cadeirantes',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Cine Alameda', 'Cinema',
+ 'Sala moderna com projeção a laser e programação de filmes independentes e mostras temáticas.',
+ 'QS 05 Rua 12, Lote 04 - Riacho Fundo I, Brasília, DF', 'Médio',
+ 'Seg-Dom 14:00 – 23:30',
+ 'https://cinealameda.com.br', '+55 61 3577-5544', 'contato@cinealameda.com.br',
+ 'https://instagram.com/cinealameda',
+ 'Acesso para cadeirantes, Reservas online, Bomboniere, Cartões',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Teatro Solar', 'Teatro',
+ 'Espaço cênico para peças autorais, stand-up e festivais estudantis. Poltronas confortáveis e boa acústica.',
+ 'SCS Quadra 7, Conjunto B - Brasília, DF', 'Médio',
+ 'Qua-Dom 19:00 – 23:00',
+ 'https://teatrosolar.com.br', '+55 61 3666-7700', 'bilheteria@teatrosolar.com.br',
+ 'https://instagram.com/teatrosolarbsb',
+ 'Reservas, Acesso para cadeirantes, Estacionamento, Ar-condicionado, Cartões',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Bistrô Dona Celina', 'Restaurante',
+ 'Menu sazonal com ingredientes do Cerrado; pratos autorais em ambiente intimista e acolhedor.',
+ 'CLS 407 Bloco D, Loja 06 - Asa Sul, Brasília, DF', 'Alto',
+ 'Ter-Sáb 19:00 – 23:30; Dom 12:30 – 16:30',
+ 'https://bistrodonacelina.com', '+55 61 3999-0407', 'reservas@bistrodonacelina.com',
+ 'https://instagram.com/bistrodonacelina',
+ 'Reservas, Vinho e cerveja, Serviço de mesa, Cartões, Acesso para cadeirantes',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'BrewLab 406', 'Pub',
+ 'Taproom com 12 torneiras rotativas de chope artesanal e carta de burgers smash. DJs aos sábados.',
+ 'CLS 406 Bloco C, Loja 20 - Asa Sul, Brasília, DF', 'Médio',
+ 'Qua-Qui 18:00 – 00:00; Sex-Sáb 18:00 – 02:00',
+ 'https://brewlab406.com', '+55 61 3777-0406', 'contato@brewlab406.com',
+ 'https://instagram.com/brewlab406',
+ 'Bar completo, Música ao vivo, Mesas ao ar livre, Cartões, Pet friendly',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL, 'Feira da Praça Central', 'Feira',
+ 'Feira de artes, gastronomia e designers locais aos domingos, com música e atividades infantis.',
+ 'Praça Central do Setor Comercial, Brasília, DF', 'Econômico',
+ 'Dom 09:00 – 15:00',
+ NULL, '+55 61 0000-5555', 'feiracentral@bsb.df.gov.br',
+ 'https://instagram.com/feirapracacentral',
+ 'Entrada gratuita, Área coberta parcial, Palco cultural, Cartões',
+ 'default-bg-locais.png', 0, NOW(), NOW()),
+
+(NULL,'Paladar do Cerrado','Restaurante',
+ 'Cozinha autoral com ingredientes do bioma; menu degustação aos fins de semana.',
+ 'CLN 309 Bloco B, Loja 04 - Asa Norte, Brasília, DF','Alto',
+ 'Ter-Sáb 19:00 – 23:30; Dom 12:30 – 16:30',
+ 'https://paladardocerrado.com.br','+55 61 3555-0309','reservas@paladardocerrado.com.br',
+ 'https://instagram.com/paladardocerrado',
+ 'Reservas, Vinho e cerveja, Serviço de mesa, Cartões, Acesso para cadeirantes',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Cantina Vila Itália','Restaurante',
+ 'Massas artesanais, molhos frescos e carta de vinhos enxuta; ambiente familiar.',
+ 'CLS 205 Bloco C, Loja 16 - Asa Sul, Brasília, DF','Médio',
+ 'Seg-Dom 11:30 – 15:30 / 18:30 – 23:00',
+ 'https://vilaitalia.com.br','+55 61 3344-0205','contato@vilaitalia.com.br',
+ 'https://instagram.com/cantinavilaitalia',
+ 'Almoço, Jantar, Cartões, Cadeiras para bebês, Para levar',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Brasa & Lenha','Restaurante',
+ 'Grelhados na parrilla e acompanhamentos de estação; carta de cervejas especiais.',
+ 'EQS 110/111 Bloco D, Loja 08 - Asa Sul, Brasília, DF','Médio',
+ 'Ter-Dom 12:00 – 23:00',
+ NULL,'+55 61 3777-0110','contato@brasaelenha.com',
+ 'https://instagram.com/brasaelenhabsb',
+ 'Reservas, Para levar, Cartões, Mesas ao ar livre',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Cozinha do Eixo','Restaurante',
+ 'Menu executivo no almoço e pratos contemporâneos à noite; opções vegetarianas.',
+ 'SIG Quadra 02, Lote 15 - Brasília, DF','Econômico',
+ 'Seg-Sáb 11:30 – 22:30',
+ NULL,'+55 61 3250-0002','oi@cozinhadoeixo.com.br',
+ 'https://instagram.com/cozinhadoeixo',
+ 'Almoço, Jantar, Opções veganas, Wi-fi gratuito, Cartões',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Bar 406 Norte','Bar',
+ 'Drinks autorais, chope gelado e petiscos; DJs às sextas.',
+ 'CLN 406 Bloco E, Loja 12 - Asa Norte, Brasília, DF','Médio',
+ 'Qua-Sáb 18:00 – 02:00; Dom 17:00 – 00:00',
+ 'https://bar406norte.com','+55 61 3666-0406','atendimento@bar406norte.com',
+ 'https://instagram.com/bar406norte',
+ 'Bar completo, Música ao vivo, Mesas ao ar livre, Cartões, Pet friendly',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Boteco da Esplanada','Bar',
+ 'Clássicos de boteco, choppinho e samba aos sábados.',
+ 'SCS Quadra 02, Conj. C, Loja 07 - Brasília, DF','Econômico',
+ 'Ter-Dom 17:00 – 01:00',
+ NULL,'+55 61 3212-0202','contato@botecodaesplanada.com.br',
+ 'https://instagram.com/botecodaesplanada',
+ 'Para levar, Cartões, Música ao vivo, Pet friendly',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Quintal do Chopp','Bar',
+ 'Chopes artesanais rotativos e hambúrguer smash; área externa ampla.',
+ 'QE 19 Conj. L, Lote 04 - Guará II, Brasília, DF','Médio',
+ 'Qui-Sáb 18:00 – 02:00; Dom 17:00 – 23:30',
+ 'https://quintaldochopp.com','+55 61 3599-1919','fala@quintaldochopp.com',
+ 'https://instagram.com/quintaldochopp',
+ 'Bar completo, Mesas ao ar livre, Cartões, Para levar',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Terraço 215','Bar',
+ 'Rooftop com vista, carta de coquetéis de autor e tapas.',
+ 'CLS 215 Bloco A, Cobertura - Asa Sul, Brasília, DF','Alto',
+ 'Sex-Dom 18:00 – 02:00',
+ 'https://terraco215.com.br','+55 61 3388-0215','reservas@terraco215.com.br',
+ 'https://instagram.com/terraco215',
+ 'Reservas, Bar completo, Mesas ao ar livre, Cartões',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Forno Nobre','Pizzaria',
+ 'Fermentação natural 48h, forno a lenha e ingredientes selecionados.',
+ 'QNA 05 Lote 23 - Taguatinga Norte, Brasília, DF','Médio',
+ 'Ter-Dom 18:00 – 23:30',
+ 'https://fornonobre.com.br','+55 61 3355-0505','pedido@fornonobre.com.br',
+ 'https://instagram.com/fornonobre',
+ 'Entrega, Para levar, Cartões, Vinho e cerveja',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Pizza da Vila 413','Pizzaria',
+ 'Pizzas clássicas e sabores autorais; opção sem glúten sob encomenda.',
+ 'CLN 413 Bloco C, Loja 02 - Asa Norte, Brasília, DF','Médio',
+ 'Qua-Seg 18:00 – 23:00',
+ NULL,'+55 61 3444-0413','contato@pizzadavila413.com.br',
+ 'https://instagram.com/pizzadavila413',
+ 'Para levar, Entrega, Cartões, Vinho e cerveja',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Dona Margherita','Pizzaria',
+ 'Estilo napolitano, massa leve e bordas altas; sabores sazonais.',
+ 'QS 12 Rua 05, Lote 10 - Riacho Fundo I, Brasília, DF','Médio',
+ 'Ter-Dom 18:30 – 23:30',
+ 'https://donamargherita.com','+55 61 3570-1212','oi@donamargherita.com',
+ 'https://instagram.com/donamargheritabsb',
+ 'Para levar, Cartões, Vinho e cerveja, Mesas ao ar livre',
+ 'default-bg-locais.png',0,NOW(),NOW()),
+
+(NULL,'Nápoles Asa Norte','Pizzaria',
+ 'Receitas tradicionais italianas e ingredientes importados; ambiente acolhedor.',
+ 'CLN 210 Bloco D, Loja 06 - Asa Norte, Brasília, DF','Alto',
+ 'Ter-Dom 19:00 – 23:45',
+ 'https://napolesasanorte.com.br','+55 61 3205-0210','reservas@napolesasanorte.com.br',
+ 'https://instagram.com/napolesasanorte',
+ 'Reservas, Vinho e cerveja, Serviço de mesa, Cartões',
+ 'default-bg-locais.png',0,NOW(),NOW());
+
+-- ==================================================================================
+-- Visualizar tabelas
+-- ==================================================================================
+
 USE qualaboa;
 SELECT * FROM usuario;
 
-CREATE DATABASE IF NOT EXISTS qualaboa
-  DEFAULT CHARACTER SET utf8mb4
-  DEFAULT COLLATE utf8mb4_unicode_ci;
+/* 
+-> Inserção de dados para teste do RF12
+
 USE qualaboa;
-
--- Usuários
-DROP TABLE IF EXISTS usuario;
-CREATE TABLE usuario (
-  id_usuario INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(100) NOT NULL,
-  email VARCHAR(120) NOT NULL UNIQUE,
-  senha VARCHAR(255) NOT NULL,
-  tipo_usuario ENUM('admin','usuario') NOT NULL DEFAULT 'usuario',
-  data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  foto_perfil VARCHAR(255) DEFAULT 'default-profile.jpg'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Admin padrão (senha: admin)
-INSERT INTO usuario (nome, email, senha, tipo_usuario) VALUES
-('Administrador','admin@qualaboa.com',
-'$2y$10$m.yk9gZS7WSrIOKY7bpG9.IK1Sq/FNkwGzsp3j6aVs1kVx0axqFOG','admin');
-
--- Resets de senha
-DROP TABLE IF EXISTS password_resets;
-CREATE TABLE password_resets (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  token VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_password_resets_usuario
-    FOREIGN KEY (user_id) REFERENCES usuario(id_usuario) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Locais
-DROP TABLE IF EXISTS locais;
-CREATE TABLE locais (
-  id_local INT AUTO_INCREMENT PRIMARY KEY,
-  -- Nome e classificação geral
-  nome VARCHAR(120) NOT NULL,
-  tipo ENUM(
-    'Restaurante','Bar','Cafeteria','Lanchonete','Pizzaria',
-    'Parque','Praça','Museu','Teatro','Show','Evento',
-    'Feira','Mercado','Atração Turística','Outro'
-  ) NOT NULL,
-  -- Sobre
-  descricao TEXT,
-  -- Localização (endereço completo)
-  endereco VARCHAR(255) NOT NULL,
-  -- Faixa de preço
-  faixa_preco ENUM('Econômico','Médio','Alto') NOT NULL,
-  -- Horário de funcionamento (ex.: "Seg–Sex 12h–22h; Sáb–Dom 11h–23h")
-  horario_funcionamento TEXT,
-  -- Contatos
-  site VARCHAR(255),
-  telefone VARCHAR(25),
-  email_contato VARCHAR(120),
-  redes_sociais TEXT,
-  -- Serviços
-  servicos TEXT,
-  -- Mídia e avaliação
-  imagem_capa VARCHAR(255),
-  avaliacao_media FLOAT DEFAULT 0,
-  -- Auditoria
-  criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  -- Índices úteis
-  INDEX idx_locais_tipo (tipo),
-  INDEX idx_locais_faixa (faixa_preco),
-  INDEX idx_locais_nome (nome)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Avaliações
-DROP TABLE IF EXISTS avaliacoes;
-CREATE TABLE avaliacoes (
-  id_avaliacao INT AUTO_INCREMENT PRIMARY KEY,
-  id_usuario   INT NOT NULL,
-  id_local     INT NOT NULL,
-  nota         TINYINT NOT NULL CHECK (nota BETWEEN 1 AND 5),
-  comentario   TEXT NULL,
-  criado_em    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_avaliacoes_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-  CONSTRAINT fk_avaliacoes_local   FOREIGN KEY (id_local)   REFERENCES locais(id_local)   ON DELETE CASCADE,
-  UNIQUE KEY unq_user_local (id_usuario, id_local)  -- 1 avaliação por usuário por local
-);
-
--- Marcar "Estou indo"
-DROP TABLE IF EXISTS estou_indo;
-CREATE TABLE estou_indo (
-  id_estou_indo INT AUTO_INCREMENT PRIMARY KEY,
-  id_usuario INT NOT NULL,
-  id_local INT NOT NULL,
-  data_marcacao DATETIME DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_estou_indo_usuario FOREIGN KEY (id_usuario)
-    REFERENCES usuario(id_usuario) ON DELETE CASCADE,
-  CONSTRAINT fk_estou_indo_local FOREIGN KEY (id_local)
-    REFERENCES locais(id_local) ON DELETE CASCADE,
-  UNIQUE KEY unq_usuario_local (id_usuario, id_local) -- evita duplicar
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Inserindo locais para teste
-INSERT INTO locais (id_local, nome, tipo, descricao, endereco, faixa_preco, horario_funcionamento, site, telefone, email_contato, redes_sociais, servicos, imagem_capa, avaliacao_media, criado_em, atualizado_em) VALUES
-(1, 'Fortunata', 'Restaurante', 'Inspirado em um local para compartilhar bons momentos com amigos e familiares, nasceu a ideia da Fortunata. Inicialmente, a Fortunata era uma pizzaria conhecida por ser a casa dos amigos, pois cada amigo era prestigiado ao ter o seu nome no sabor de pizza preferido. Percebendo a necessidade de oferecer algo a mais, a Fortunata começou a elaborar pratos em sua cozinha – foi nesse momento que surgiu o restaurante Fortunata. Buscando o melhor para atender os amigos e clientes, a cozinha foi se especializando até que hoje roubam a cena da cidade. Atualmente, a casa conta com diversos pratos de risotos, massas, carnes e frutos do mar, além das famosas pizzas. Com cara nova, mas com a mesma tradição há 20 anos, a Fortunata é o local ideal para se reunir com os amigos e familiares. Na Fortunata os clientes são nossos amigos e transformamos o espaço em uma verdadeira extensão de sua casa. Nosso ambiente é tradicional e familiar e conta com uma música de fundo calma.', 'Shis Qi 09 Bloco C, Loja 6 - Lago Sul, Brasília, Distrito Federal 71625-009 Brasil', 'Alto', 'Seg-Sex 12:00 – 15:00 / 18:00 – 00:00; Sáb-Dom 12:00 – 16:00 / 18:00 – 00:00', 'https://www.fortunata.com.br/', '+55 61 3364-6111', 'fortunata@terra.com.br', 'https://www.instagram.com/fortunatarestaurante/', 'Almoço, Jantar, Dietas adequada para vegetarianos, Aceita cartão de crédito, Acesso para cadeirantes, American Express, Bar completo, Cadeiras para bebês, Entrega, Estacionamento disponível, Estacionamento na rua, Lugares para sentar, Mastercard, Mesas ao ar livre, Para levar, Reservas, Serve bebida alcoólica, Serviço de mesa, Vinho e cerveja, Visa, Wi-fi gratuito', 'img_68f63b505e344.jpg', 0, '2025-10-13 13:49:54', '2025-10-20 13:38:24'),
-(2, 'Vert Café', 'Cafeteria', 'Um café feito para momentos. Somos um café de comida funcional abertos em 2019 e buscamos encantar nossos clientes com uma culinária que faz bem para o corpo e surpreende no sabor. Aqui todos os nossos ingredientes são orgânicos e sem glúten, temos várias opções veganas, vegetarianas e só usamos carnes com selo de sustentabilidade e não crueldade aos animais.', 'CLS 403 bl B - Asa Sul Loja 34, Brasília, Distrito Federal 70237-520 Brasil', 'Econômico', 'Seg-Dom: 09:00 – 22:00', 'http://www.facebook.com/vertcafebr/?ref=page_internal', '+55 61 99113-6424', 'vertcafeteria@gmail.com', '', 'Café, Café da manhã, Almoço, Jantar, Brunch, Drinks, Lugares para sentar, Para levar, Reservas, Serve bebida alcoólica, Serviço de mesa', 'img_68f63c74ddcac.jpg', 0, '2025-10-20 13:43:16', '2025-10-20 13:43:16'),
-(3, 'Ordinário', 'Bar', 'Um boteco musical com muito samba e pagode, cerveja gelada, petiscos deliciosos e aquele clima animado. Gostamos de te dar liberdade para pedir: Comanda individual, atendimento na mesa ou no balcão, sempre simpático e ágil. Um dica final: Faz sua reserva no Ordi, que não tem erro.', 'Sbs, Scs Q. 2 Bl Q Lojas 5/6, Asa Sul, Brasília, Distrito Federal 70070-120 Brasil', 'Econômico', 'Seg-Dom: 17:00 – 02:00', 'https://www.ordinariobar.com/', '(61) 99184-4421', '', '', 'Brasileira, Restaurante com bar, Jantar, Serviço de mesa', 'img_68f63d253a18f.jpg', 0, '2025-10-20 13:46:13', '2025-10-20 13:46:13'),
-(4, 'LONDON STREET', 'Bar', 'A London Street Pub foi fundada em março de 2016 pela Família Pires Mesquita sua história com Londres não era somente pela cidade maravilhosa, cercada de tradição da rainha e princesa tinha mais glamour dentro dos tradicionais pubs inglês, queríamos trazer para a capital toda aquele magnetismo inglês que tem quando se pede um pint em seu pub favorito, além do amor junto a Londres também iniciava um aprendizado de cervejas artesanais nacionais e internacionais, durante uma viagem de 20 dias a cidade eles puderam conhecer muita Ale e bitter dentro de um pub tradicionais . A história desse bar era trazer toda a tradição de um bar estilo inglês e um local onde as pessoas pudessem curtir toda a decoração que foi inspiradas em vários pub inglês, como Old Bank, Princess Luiza, after e outros lindos e famosos pubs localizado em grandes bairros de Londres.', 'Quadra Cln 214 Bloco D, 23 e 25 Comercial da 214 Norte - Virada para quadra residencial, Brasília, Distrito Federal 70873-540 Brasil', 'Médio', 'Seg-Dom: 17:00 - 22:00', 'http://www.facebook.com/londonstreetpub/', '+55 6191192482', 'londonstreetcervejaria@gmail.com', '', 'Pub com cerveja artesanal, Bar, Internacional, Europeia, Pub com restaurante, Restaurantes que servem cerveja, Aberto até tarde, Drinks', 'img_68f63e4105938.jpg', 0, '2025-10-20 13:50:57', '2025-10-20 14:47:04'),
-(5, 'New Mercadito', 'Restaurante', 'O Mercadito surgiu com a proposta de atender ao público da cidade de forma leve e transada, unindo delícias, cultura e muita animação. A casa, que leva a assinatura do @beefeaterbrasil e @stellaartoisbrasil, aposta no diferencial de drinks incrementados e autorais, além de grandes clássicos da coquetelaria. O cardápio não fica atrás, com opções de aperitivos e pratos assinados por chefes de renome. Instalado em uma área de 250 m², o Mercadito foi projetado com referências cosmopolitas, inspirado em tendências industriais e modernas na concepção do espaço, considerando a natureza multiuso da casa. #MercaditoBSB #NewMercadito', 'Quadra Cls 201 Bloco a Loja 01 - Asa Sul, Brasília, Distrito Federal 70232-510 Brasil', 'Econômico', 'Seg-Dom: 16:00 – 01:00', 'http://www.newmercadito.com.br/', '(61) 90227504', 'adm.mercadito@gmail.com', '', 'Brasileira, Bar, Pub com restaurante, Restaurante com bar, Restaurantes que servem cerveja', 'img_68f63e9c4266b.jpg', 0, '2025-10-20 13:52:28', '2025-10-20 13:52:28'),
-(6, 'Vila Tarêgo', 'Restaurante', 'Art. Burger. Bar. Wine New gastronomic, collective and cultural space of the city. Rustic design and reutilization in an incredible area of ​​2500 mt!', 'SMPW Quadra 05 Conjunto 12 Lote 5 Parte C Parkway Águas Claras, Brasília, Distrito Federal 71735-512 Brasil', 'Econômico', 'Seg-Dom: 17:00 – 23:00', 'https://vilatarego.negocio.site/', '+55 61 3053-3317', 'contato@vilatarego.com.br', '', 'Americana, Brasileira, Bar, Lanchonete', 'img_68f63f0837246.jpg', 0, '2025-10-20 13:54:16', '2025-10-20 13:54:16');
-
--- Inserindo usuários fictícios
-INSERT INTO usuario (nome, email, senha) VALUES
-('Usuário 1', 'user1@email.com', '12345678910'),
-('Usuário 2', 'user2@email.com', '12345678910'),
-('Usuário 3', 'user3@email.com', '12345678910'),
-('Usuário 4', 'user4@email.com', '12345678910'),
-('Usuário 5', 'user5@email.com', '12345678910'),
-('Usuário 6', 'user6@email.com', '12345678910'),
-('Usuário 7', 'user7@email.com', '12345678910'),
-('Usuário 8', 'user8@email.com', '12345678910'),
-('Usuário 9', 'user9@email.com', '12345678910'),
-('Usuário 10', 'user10@email.com', '12345678910'),
-('Usuário 11', 'user11@email.com', '12345678910'),
-('Usuário 12', 'user12@email.com', '12345678910'),
-('Usuário 13', 'user13@email.com', '12345678910'),
-('Usuário 14', 'user14@email.com', '12345678910'),
-('Usuário 15', 'user15@email.com', '12345678910'),
-('Usuário 16', 'user16@email.com', '12345678910'),
-('Usuário 17', 'user17@email.com', '12345678910'),
-('Usuário 18', 'user18@email.com', '12345678910'),
-('Usuário 19', 'user19@email.com', '12345678910'),
-('Usuário 20', 'user20@email.com', '12345678910'),
-('Usuário 21', 'user21@email.com', '12345678910'),
-('Usuário 22', 'user22@email.com', '12345678910'),
-('Usuário 23', 'user23@email.com', '12345678910'),
-('Usuário 24', 'user24@email.com', '12345678910'),
-('Usuário 25', 'user25@email.com', '12345678910'),
-('Usuário 26', 'user26@email.com', '12345678910'),
-('Usuário 27', 'user27@email.com', '12345678910'),
-('Usuário 28', 'user28@email.com', '12345678910'),
-('Usuário 29', 'user29@email.com', '12345678910'),
-('Usuário 30', 'user30@email.com', '12345678910');
-
--- Inserindo avaliações fictícias
-DELETE FROM avaliacoes WHERE id_avaliacao > 0;
-INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- Fortunata – 3 avaliações, todas 5⭐ (nota perfeita, pouca popularidade)
-(1,1,5);
-INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- Vert Café – 30 avaliações, maioria 4–5⭐ (muito popular, nota alta)
-(1,2,5),(2,2,5),(3,2,5),(4,2,4),(5,2,4),(6,2,5),(7,2,5),(8,2,4),(9,2,5),(10,2,5),
-(11,2,4),(12,2,5),(13,2,4),(14,2,5),(15,2,4),(16,2,5),(17,2,5),(18,2,4),(19,2,5),(20,2,4),
-(21,2,5),(22,2,4),(23,2,5),(24,2,5),(25,2,4),(26,2,5),(27,2,4),(28,2,5),(29,2,4),(30,2,5);
-INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- Ordinário – 15 avaliações medianas (popularidade intermediária, nota média)
-(1,3,3),(2,3,4),(3,3,3),(4,3,4),(5,3,3),(6,3,3),(7,3,4),(8,3,3),(9,3,4),(10,3,3),
-(11,3,4),(12,3,3),(13,3,4),(14,3,3),(15,3,4),(16,3,4),(17,3,5),(18,3,4),(19,3,5);
-INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- London Street – 8 avaliações boas, nota consistente (nota 4.3, pouca popularidade)
-(1,4,4),(2,4,4),(3,4,5),(4,4,4),(5,4,4),(6,4,5),(7,4,4),(8,4,4);
-INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- New Mercadito – 25 avaliações, notas variadas (muito popular, média baixa)
-(1,5,2),(2,5,3),(3,5,2),(4,5,3),(5,5,2),(6,5,2),(7,5,3),(8,5,2),(9,5,3),(10,5,2),
-(11,5,3),(12,5,2),(13,5,3),(14,5,2),(15,5,3),(16,5,2),(17,5,3),(18,5,3),(19,5,2),(20,5,3),
-(21,5,2),(22,5,3),(23,5,2),(24,5,3),(25,5,2);
-INSERT INTO avaliacoes (id_usuario, id_local, nota) VALUES -- Vila Tarêgo – 10 avaliações, todas 5⭐ (nota máxima, popularidade média)
-(1,6,5),(2,6,5),(4,6,5),(5,6,5),(6,6,5),(7,6,5),(8,6,5),(9,6,5),(10,6,5);
-
--- Modificação na tabela para o RF10
-UPDATE locais l
-JOIN (
-  SELECT id_local, COALESCE(AVG(nota),0) AS media
-  FROM avaliacoes
-  GROUP BY id_local
-) a ON a.id_local = l.id_local
-SET l.avaliacao_media = a.media;
+INSERT INTO estou_indo (id_usuario, id_local, data_marcacao, desmarcado_em, desmarcado_motivo)
+VALUES (2, 2, DATE_SUB(NOW(), INTERVAL 36 HOUR), DATE_SUB(NOW(), INTERVAL 24 HOUR), 'auto'); 
+*/

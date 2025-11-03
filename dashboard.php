@@ -24,7 +24,8 @@ $nome = $row ? $row['nome'] : ($_SESSION['user_name'] ?? 'Usuário');
     <h1>Olá, <?=htmlspecialchars($nome)?> 👋</h1>
     <p>Qual a boa de hoje? </p>
     <a class="link-button" href="<?= url('auth/perfil.php') ?>">Perfil</a>
-    <a class="link-button" href="<?= url('locais/explorar.php') ?>">Locais</a>
+    <a class="link-button" href="<?= url('locais/explorar.php') ?>">Explorar Locais</a>
+    <a class="link-button" href="<?= url('feed.php') ?>">Feed de Recomendação</a>
 
     <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 
