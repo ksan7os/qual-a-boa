@@ -73,14 +73,30 @@ if ($site !== '') {
 /* ========================== RF09: avaliações ========================== */
 $id_usuario_logado = current_user_id(); // vem do bd/auth.php
 
-// RF08 — verificar se o usuário já marcou esse local
+// >>> NOVO: expira automaticamente qualquer "Estou indo" ativo > 12h (soft delete), apenas se logado
+if ($id_usuario_logado) {
+  $expira = $pdo->prepare("
+    UPDATE estou_indo
+       SET desmarcado_em = NOW(),
+           desmarcado_motivo = 'auto'
+     WHERE id_usuario = :u
+       AND desmarcado_em IS NULL
+       AND TIMESTAMPDIFF(HOUR, data_marcacao, NOW()) > 12
+  ");
+  $expira->execute([':u' => $id_usuario_logado]);
+}
+
+// RF08 — verificar se o usuário já marcou esse local (ATIVO: sem desmarcar e <= 12h)
 $ja_indo = false;
 if ($id_usuario_logado) {
   $st = $pdo->prepare("
-    SELECT 1 FROM estou_indo 
-    WHERE id_usuario = :u 
-      AND id_local = :l 
-      AND TIMESTAMPDIFF(HOUR, data_marcacao, NOW()) < 12
+    SELECT 1
+      FROM estou_indo 
+     WHERE id_usuario = :u 
+       AND id_local = :l 
+       AND desmarcado_em IS NULL
+       AND TIMESTAMPDIFF(HOUR, data_marcacao, NOW()) <= 12
+     LIMIT 1
   ");
   $st->execute([':u' => $id_usuario_logado, ':l' => $id_local]);
   $ja_indo = $st->fetchColumn() > 0;
@@ -90,7 +106,7 @@ if ($id_usuario_logado) {
 $minha_avaliacao = null;
 if ($id_usuario_logado) {
   $st = $pdo->prepare("SELECT nota, comentario FROM avaliacoes WHERE id_local = ? AND id_usuario = ?");
-  $st->execute([$id_local, $id_usuario_logado]);
+  $st->execute([$id_local, $id_usuario_logado]); // <<< usa o mesmo id do usuário logado
   $minha_avaliacao = $st->fetch(PDO::FETCH_ASSOC);
 }
 
@@ -107,12 +123,8 @@ $avaliacoes = $st2->fetchAll(PDO::FETCH_ASSOC);
 /* ===================================================================== */
 
 /* ========================== RF08: Estou indo ========================== */
-$jaMarcou = false;
-if ($id_usuario_logado) {
-  $stmtCheck = $pdo->prepare("SELECT 1 FROM estou_indo WHERE id_usuario = :u AND id_local = :l");
-  $stmtCheck->execute([':u' => $id_usuario_logado, ':l' => $id_local]);
-  $jaMarcou = $stmtCheck->rowCount() > 0;
-}
+/* >>> Ajuste: usar o mesmo critério de ATIVO do $ja_indo para o botão  */
+$jaMarcou = $ja_indo;
 /* ===================================================================== */
 ?>
 <!DOCTYPE html>
@@ -285,7 +297,7 @@ if ($id_usuario_logado) {
         <?php 
         // Em detalhes.php, antes do form:
         $minha = $pdo->prepare("SELECT nota, comentario FROM avaliacoes WHERE id_usuario = :u AND id_local = :l LIMIT 1");
-        $minha->execute([':u' => $_SESSION['user_id'], ':l' => $id_local]);
+        $minha->execute([':u' => $id_usuario_logado, ':l' => $id_local]); // <<< usa o mesmo id do usuário logado
         $minhaAvaliacao = $minha->fetch(PDO::FETCH_ASSOC);
         ?>
 

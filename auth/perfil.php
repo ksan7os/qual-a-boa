@@ -197,6 +197,7 @@ $locaisMarcados = $stmtEstouIndo->fetchAll(PDO::FETCH_ASSOC);
 
         <a class="link-button" href="editar-perfil.php">Editar Perfil</a>
         <a class="link-button" href="../dashboard.php">Voltar</a>
+        <a class="link-button" href="../usuario/historico.php">Ver meu histórico</a>
         <a class="link-button" href="logout.php">Logout</a>
 
         <!-- ================= RF08: Locais marcados como “Estou indo” ================= -->
