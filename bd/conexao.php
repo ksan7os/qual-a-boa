@@ -2,7 +2,7 @@
 // conexao.php
 declare(strict_types=1);
 
-const BASE_PATH = '/php/qual-a-boa';
+const BASE_PATH = 'http://localhost/faculdade/qual-a-boa/';
 
 function url(string $path): string {
     return rtrim(BASE_PATH, '/') . '/' . ltrim($path, '/');
@@ -10,7 +10,7 @@ function url(string $path): string {
 
 // Config DB
 const DB_HOST = '127.0.0.1';
-const DB_PORT = '3306'; // <- Adicione a porta aqui
+const DB_PORT = '3307'; // <- Adicione a porta aqui
 const DB_NAME = 'qualaboa';
 const DB_USER = 'root';
 const DB_PASS = '';
