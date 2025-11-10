@@ -92,35 +92,168 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperação de Senha</title>
-    <link rel="stylesheet" href="../css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esqueceu a senha? - Qual a Boa?</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #3c0a5d 0%, #7e1c8d 60%, #a72791 100%);
+    }
+
+    .forgot-wrapper {
+      width: 500px;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+      padding: 46px 46px 34px;
+      text-align: center;
+    }
+
+    .forgot-wrapper h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #3c064c;
+      margin-bottom: 10px;
+    }
+
+    .forgot-wrapper p.subtext {
+      font-size: 0.9rem;
+      color: #e17272;
+      margin-bottom: 26px;
+      line-height: 1.4;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 52px;
+      border: none;
+      outline: none;
+      border-radius: 999px;
+      background: #fff;
+      padding: 0 20px;
+      font-size: 0.9rem;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary {
+      width: 140px;
+      height: 42px;
+      border: none;
+      background: #2f0035;
+      color: #fff;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      margin: 0 auto 18px;
+      display: block;
+      transition: transform .15s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .helper-text {
+      font-size: 0.78rem;
+      color: #4b5563;
+    }
+
+    .helper-text a {
+      color: #a72791;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .helper-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* Mensagens do PHP */
+    .error, .success {
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    .error {
+      background: #ffe6e6;
+      border: 1px solid #ff9f9f;
+      color: #a10000;
+    }
+
+    .success {
+      background: #e8fff0;
+      border: 1px solid #8ee0b0;
+      color: #06663a;
+    }
+
+    @media (max-width: 540px) {
+      .forgot-wrapper {
+        width: 92%;
+        padding: 40px 22px 30px;
+      }
+      .forgot-wrapper h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="main-container">
-        <h1>Recuperação de Senha</h1>
+  <div class="forgot-wrapper">
+    <h1>Esqueceu a senha?</h1>
+    <p class="subtext">
+      Informe o email de cadastro para receber o<br>
+      link de recuperação de senha.
+    </p>
 
-        <?php if ($mensagem_erro): ?>
-            <div class="error"><?php echo htmlspecialchars($mensagem_erro); ?></div>
-        <?php endif; ?>
+    <?php if ($mensagem_erro): ?>
+      <div class="error"><?= htmlspecialchars($mensagem_erro) ?></div>
+    <?php endif; ?>
 
-        <?php if ($mensagem_sucesso): ?>
-            <div class="success"><?php echo htmlspecialchars($mensagem_sucesso); ?></div>
-        <?php endif; ?>
+    <?php if ($mensagem_sucesso): ?>
+      <div class="success"><?= htmlspecialchars($mensagem_sucesso) ?></div>
+    <?php endif; ?>
 
-        <form method="POST" class="form">
-            <div class="form-group">
-                <label for="email">Informe seu e-mail:</label>
-                <input type="email" name="email" id="email" required>
-            </div>
+    <form method="POST">
+      <div class="form-group">
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="form-control"
+          placeholder="Email"
+          required
+        >
+      </div>
 
-            <button type="submit">Enviar Link de Recuperação</button>
-        </form>
+      <button type="submit" class="btn-primary">Enviar</button>
+    </form>
 
-        <a class="link-button "href="../dashboard.php">Voltar</a>
-    </div>
+    <p class="helper-text">
+      Já tem uma conta?
+      <a href="login.php">Entrar</a>
+    </p>
+  </div>
 </body>
 </html>
