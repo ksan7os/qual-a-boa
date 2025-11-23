@@ -33,12 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name'] = $user['nome'];
             $_SESSION['user_role'] = $user['tipo_usuario'];
 
-            // 🔹 Redirecionamento baseado no tipo de usuário
-            if ($user['tipo_usuario'] === 'admin') {
-                header('Location: ' . url('locais/crud/listar.php')); // ajuste o caminho se necessário
-            } else {
-                header('Location: ' . url('dashboard.php'));
-            }
+            header('Location: ' . url('dashboard.php'));
             exit;
         }
     }
@@ -48,9 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <title>Entrar - Qual a Boa?</title>
+  <meta charset="UTF-8">
+  <title>Login - Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- seu css global -->
   <link rel="stylesheet" href="../css/style.css">
   <style>
     /* Fundo */
@@ -200,8 +196,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit">Entrar</button>
     </form>
 
-    <p class="text">Não tem conta? <a href="<?= url('auth/register.php') ?>">Criar conta</a></p>
-    <p class="text">Esqueceu a senha? <a href="<?= url('auth/recuperacao-senha.php') ?>">Recuperar minha conta</a></p>
+    <p class="helper-text" style="margin-top: 0;">
+      Não tem uma conta?
+      <a href="<?= url('auth/register.php') ?>">Cadastre-se</a>
+    </p>
+    <p class="helper-text" style="margin-top: 4px;">
+      <a href="<?= url('auth/recuperacao-senha.php') ?>">Esqueceu a senha?</a>
+    </p>
   </div>
 </body>
 </html>

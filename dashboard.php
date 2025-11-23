@@ -13,7 +13,7 @@ $nome = $row ? $row['nome'] : ($_SESSION['user_name'] ?? 'Usuário');
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <title>Dashboard - Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css">

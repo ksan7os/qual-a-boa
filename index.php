@@ -7,12 +7,11 @@ if (is_logged_in()) {
     exit;
 }
 ?>
-
 <!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <title>Qual a Boa? - Início</title>
+  <title>Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css">
 

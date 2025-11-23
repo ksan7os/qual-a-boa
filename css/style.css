@@ -44,6 +44,8 @@ html, body {
 .flex {
   display: flex;
 }
+.alert-error { background: rgba(225, 29, 72, 0.12); color: #991b1b; }
+.alert-ok { background: rgba(34, 197, 94, 0.12); color: #166534; }
 
 .flex-column {
   display: flex;

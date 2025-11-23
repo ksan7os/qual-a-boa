@@ -44,9 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <title>Criar conta - Qual a Boa?</title>
+  <meta charset="UTF-8">
+  <title>Cadastre-se - Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- css global do projeto -->
   <link rel="stylesheet" href="../css/style.css">
   <style>
     body {
@@ -159,15 +160,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 </head>
 <body>
-  <div class="main-container">
-    <h1>Criar conta</h1>
+  <div class="register-wrapper">
+    <h1>Cadastre-se</h1>
 
     <!-- Exibindo erros -->
     <?php if ($errors): ?>
       <div class="error">
         <?php foreach ($errors as $e): ?><p><?=htmlspecialchars($e)?></p><?php endforeach; ?>
       </div>
-    <?php endif; ?>
+      <div class="social-btn">
+        <img src="https://www.svgrepo.com/show/448224/facebook.svg" width="30" height="30" alt="Facebook">
+      </div>
+    </div>
+
+    <?php foreach ($errors as $err): ?>
+      <div class="alert alert-error"><?= htmlspecialchars($err) ?></div>
+    <?php endforeach; ?>
 
     <!-- Formulário -->
     <form method="post" autocomplete="off" novalidate class="form">

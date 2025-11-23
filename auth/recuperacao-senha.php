@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -204,26 +204,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <h1>Recuperação de Senha</h1>
+  <div class="forgot-wrapper">
+    <h1>Esqueceu a senha?</h1>
+    <p class="subtext">
+      Informe o email de cadastro para receber o<br>
+      link de recuperação de senha.
+    </p>
 
         <!-- Exibindo mensagens de erro ou sucesso -->
         <?php if ($mensagem_erro): ?>
             <div class="error"><?php echo htmlspecialchars($mensagem_erro); ?></div>
         <?php endif; ?>
 
-        <?php if ($mensagem_sucesso): ?>
-            <div class="success"><?php echo htmlspecialchars($mensagem_sucesso); ?></div>
-        <?php endif; ?>
+    <?php if ($mensagem_sucesso): ?>
+      <div class="success"><?= htmlspecialchars($mensagem_sucesso) ?></div>
+    <?php endif; ?>
 
-        <form method="POST" class="form">
-            <div class="form-group">
-                <label for="email">Informe seu e-mail:</label>
-                <input type="email" name="email" id="email" required>
-            </div>
+    <form method="POST">
+      <div class="form-group">
+        <input
+          type="email"
+          name="email"
+          id="email"
+          class="form-control"
+          placeholder="Email"
+          required
+        >
+      </div>
 
-            <button type="submit">Enviar Link de Recuperação</button>
-        </form>
+      <button type="submit" class="btn-primary">Enviar</button>
+    </form>
 
         <a class="link-button" href="../dashboard.php">Voltar</a>
     </div>
