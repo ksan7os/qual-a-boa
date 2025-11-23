@@ -70,61 +70,232 @@ $msg = isset($_GET['msg']) ? trim($_GET['msg']) : '';
   <meta charset="utf-8">
   <title>Minhas preferências — Qual a Boa?</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="stylesheet" href="../css/style.css">
+
   <style>
-    .wrap{max-width:900px;margin:24px auto;padding:16px}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:16px}
-    .grid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
-    label{display:flex;gap:8px;align-items:center;margin:6px 0}
-    .chip{display:inline-block;padding:6px 10px;border:1px solid #e5e7eb;border-radius:999px;margin:4px 6px;background:#f8fafc}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #e5e7eb;background:#0d6efd;color:#fff;text-decoration:none}
-    .btn:hover{background:#0b5ed7}
-    .success{background:#ecfdf5;border:1px solid #a7f3d0;padding:10px;border-radius:8px;color:#065f46;margin-bottom:10px}
-    @media(max-width:800px){.grid{grid-template-columns:1fr}}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at bottom, #9c1fd4 0%, #000 60%);
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 900px;
+      color: #fff;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 32px 36px;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+      color: #111;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: #3d0a80;
+    }
+
+    h3 {
+      margin-bottom: 12px;
+      font-size: 18px;
+      color: #2d0b63;
+    }
+
+    .success {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      padding: 12px;
+      border-radius: 10px;
+      color: #065f46;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+
+    /* Chips + checkboxes */
+    label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      margin: 6px 0;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      accent-color: #7b2dff;
+      cursor: pointer;
+    }
+
+    .chip {
+      background: #e9ddff;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: #3a2b7a;
+      font-weight: 500;
+      border: 1px solid #cfc4ff;
+    }
+
+    .muted {
+      color: #555;
+      font-size: 13px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #e5e7eb;
+      margin: 20px 0;
+    }
+
+    /* Grid para dias e horário */
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @media(max-width: 700px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    input[type="time"] {
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+      background: #fff;
+      margin-left: 6px;
+    }
+
+    /* Botões */
+    .btn-row {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 22px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      text-align: center;
+      transition: 0.15s ease;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+    }
+
+    .btn-save {
+      background: #6c1bff;
+      color: #fff;
+    }
+
+    .btn-save:hover {
+      background: #5515cc;
+    }
+
+    .btn-white {
+      background: #fff;
+      color: #222;
+      border: 1px solid #ddd;
+    }
+
+    .btn-white:hover {
+      background: #eaeaea;
+    }
   </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Minhas preferências</h1>
-      <?php if($msg): ?><div class="success"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
+<div class="wrap">
+  <div class="card">
 
-      <form method="post">
-        <h3>Tipos favoritos</h3>
+    <h1>Minhas preferências</h1>
+
+    <?php if($msg): ?>
+      <div class="success"><?= htmlspecialchars($msg) ?></div>
+    <?php endif; ?>
+
+    <form method="post">
+
+      <!-- Tipos favoritos -->
+      <h3>Tipos favoritos</h3>
+      <div>
+        <?php foreach ($tipos as $t): ?>
+          <?php $checked = in_array($t, $meusTipos, true) ? 'checked' : ''; ?>
+          <label>
+            <input type="checkbox" name="tipos[]" value="<?= htmlspecialchars($t) ?>" <?= $checked ?>>
+            <span class="chip"><?= htmlspecialchars($t) ?></span>
+          </label>
+        <?php endforeach; ?>
+
+        <?php if (!$tipos): ?>
+          <p class="muted">Ainda não há tipos cadastrados.</p>
+        <?php endif; ?>
+      </div>
+
+      <hr>
+
+      <!-- Horário típico -->
+      <h3>Horário típico que você sai</h3>
+
+      <div class="grid">
+        <!-- Dias -->
         <div>
-          <?php foreach ($tipos as $t): ?>
-            <?php $checked = in_array($t, $meusTipos, true) ? 'checked' : ''; ?>
-            <label><input type="checkbox" name="tipos[]" value="<?= htmlspecialchars($t) ?>" <?= $checked ?>> <span class="chip"><?= htmlspecialchars($t) ?></span></label>
+          <p style="margin-bottom: 6px; color: #2d0b63; font-weight: 600;">Dias:</p>
+
+          <?php foreach ($DIA_OPTS as $d): ?>
+            <label>
+              <input type="checkbox" name="dias[]" value="<?= $d ?>" 
+              <?= in_array($d, $horarios['dias'] ?? [], true) ? 'checked' : '' ?>>
+              <span class="chip"><?= strtoupper($d) ?></span>
+            </label>
           <?php endforeach; ?>
-          <?php if (!$tipos): ?><p class="muted">Ainda não há tipos cadastrados.</p><?php endif; ?>
         </div>
 
-        <hr style="margin:14px 0">
+        <!-- Janela -->
+        <div>
+          <p style="margin-bottom: 6px; color: #2d0b63; font-weight: 600;">Janela (opcional):</p>
 
-        <h3>Horário típico que você sai</h3>
-        <div class="grid">
-          <div>
-            <p>Dias:</p>
-            <?php foreach ($DIA_OPTS as $d): ?>
-              <label>
-                <input type="checkbox" name="dias[]" value="<?= $d ?>" <?= in_array($d, $horarios['dias']??[], true) ? 'checked' : '' ?>>
-                <span class="chip"><?= strtoupper($d) ?></span>
-              </label>
-            <?php endforeach; ?>
-          </div>
-          <div>
-            <p>Janela (opcional):</p>
-            <label>Início: <input type="time" name="inicio" value="<?= htmlspecialchars($horarios['inicio']??'') ?>"></label>
-            <label>Fim: <input type="time" name="fim" value="<?= htmlspecialchars($horarios['fim']??'') ?>"></label>
-          </div>
-        </div>
+          <label>Início:
+            <input type="time" name="inicio" value="<?= htmlspecialchars($horarios['inicio'] ?? '') ?>">
+          </label>
 
-        <div style="margin-top:16px;">
-          <button class="btn" type="submit">Salvar preferências</button>
-          <a class="btn" style="background:#fff;color:#111;border-color:#e5e7eb" href="../feed.php">Ir para o feed</a>
+          <label style="margin-top: 8px;">Fim:
+            <input type="time" name="fim" value="<?= htmlspecialchars($horarios['fim'] ?? '') ?>">
+          </label>
         </div>
-      </form>
-    </div>
+      </div>
+
+      <!-- Botões -->
+      <div class="btn-row">
+        <button type="submit" class="btn btn-save">Salvar preferências</button>
+        <a href="../feed.php" class="btn btn-white">Ir para o feed</a>
+      </div>
+
+    </form>
+
   </div>
+</div>
 </body>
 </html>

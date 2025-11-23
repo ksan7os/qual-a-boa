@@ -48,18 +48,128 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <title>Criar conta - Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body {
+      background: linear-gradient(180deg, #4B0082, #B43BF0);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .main-container {
+      background: #fff;
+      width: 420px;
+      padding: 40px 50px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .main-container h1 {
+      font-size: 28px;
+      color: #2E004F;
+      margin-bottom: 20px;
+    }
+
+    .social-login {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+
+    .social-login img {
+      width: 42px;
+      cursor: pointer;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .form label {
+      text-align: left;
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .form input:focus {
+      border-color: #8A2BE2;
+    }
+
+    .form button {
+      margin-top: 10px;
+      background: #2E004F;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .form button:hover {
+      background: #55007F;
+    }
+
+    .muted {
+      font-size: 14px;
+      margin-top: 8px;
+      color: #333;
+    }
+
+    .muted a {
+      color: #8A2BE2;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .muted a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      background: #ffd4d4;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      color: #a30000;
+      font-size: 14px;
+    }
+  </style>
 
 </head>
 <body>
   <div class="main-container">
     <h1>Criar conta</h1>
 
+    <!-- Exibindo erros -->
     <?php if ($errors): ?>
       <div class="error">
         <?php foreach ($errors as $e): ?><p><?=htmlspecialchars($e)?></p><?php endforeach; ?>
       </div>
     <?php endif; ?>
 
+    <!-- Formulário -->
     <form method="post" autocomplete="off" novalidate class="form">
       <label>Nome
         <input type="text" name="nome" value="<?=htmlspecialchars($name)?>" required>
@@ -77,6 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <p class="muted">Já tem conta? <a href="<?= url('auth/login.php') ?>">Entrar</a></p>
-  <div>
+  </div>
 </body>
 </html>

@@ -98,11 +98,116 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperação de Senha</title>
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, #4B0082, #B43BF0);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .main-container {
+            background: #fff;
+            width: 420px;
+            padding: 40px 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .main-container h1 {
+            font-size: 28px;
+            color: #2E004F;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #8A2BE2;
+        }
+
+        button {
+            margin-top: 10px;
+            background: #2E004F;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #55007F;
+        }
+
+        .link-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid #A63CE9;
+            color: #A63CE9;
+            text-decoration: none;
+            font-size: 16px;
+            background: transparent;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .link-button:hover {
+            background: #A63CE9;
+            color: #fff;
+        }
+
+        .error {
+            background: #ffd4d4;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: #a30000;
+            font-size: 14px;
+        }
+
+        .success {
+            background: #d4ffd8;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: #1d7a2d;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-container">
         <h1>Recuperação de Senha</h1>
 
+        <!-- Exibindo mensagens de erro ou sucesso -->
         <?php if ($mensagem_erro): ?>
             <div class="error"><?php echo htmlspecialchars($mensagem_erro); ?></div>
         <?php endif; ?>
@@ -120,7 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <button type="submit">Enviar Link de Recuperação</button>
         </form>
 
-        <a class="link-button "href="../dashboard.php">Voltar</a>
+        <a class="link-button" href="../dashboard.php">Voltar</a>
     </div>
 </body>
 </html>

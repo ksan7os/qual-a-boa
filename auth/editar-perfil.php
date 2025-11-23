@@ -136,6 +136,110 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             document.getElementById('foto_perfil').setAttribute('data-foto', 'default-profile.jpg');
         }
     </script>
+    <style>
+        body {
+            background: linear-gradient(180deg, #4B0082, #B43BF0);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: "Poppins", sans-serif;
+            color: #333;
+        }
+
+        .main-container {
+            background: #fff;
+            width: 80%;
+            max-width: 960px;
+            padding: 40px 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+            margin-top: 50px;
+        }
+
+        h1 {
+            font-size: 26px;
+            color: #2E004F;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: #A63CE9;
+        }
+
+        .foto-preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #A63CE9;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #8A2BE2;
+        }
+
+        .link-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 2px solid #A63CE9;
+            color: #A63CE9;
+            text-decoration: none;
+            font-size: 16px;
+            background: transparent;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .link-button:hover {
+            background: #A63CE9;
+            color: #fff;
+        }
+
+        /* Estilo para os botões de alterar foto */
+        .foto-preview + button {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <div class="main-container">
