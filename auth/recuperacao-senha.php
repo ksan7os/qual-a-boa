@@ -94,130 +94,114 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Esqueceu a senha? - Qual a Boa?</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperação de Senha</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, #4B0082, #B43BF0);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: "Poppins", sans-serif;
+        }
 
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(180deg, #3c0a5d 0%, #7e1c8d 60%, #a72791 100%);
-    }
+        .main-container {
+            background: #fff;
+            width: 420px;
+            padding: 40px 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
+        }
 
-    .forgot-wrapper {
-      width: 500px;
-      background: #fff;
-      border-radius: 24px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-      padding: 46px 46px 34px;
-      text-align: center;
-    }
+        .main-container h1 {
+            font-size: 28px;
+            color: #2E004F;
+            margin-bottom: 20px;
+        }
 
-    .forgot-wrapper h1 {
-      font-size: 2.2rem;
-      font-weight: 600;
-      color: #3c064c;
-      margin-bottom: 10px;
-    }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .forgot-wrapper p.subtext {
-      font-size: 0.9rem;
-      color: #e17272;
-      margin-bottom: 26px;
-      line-height: 1.4;
-    }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+            text-align: left;
+        }
 
-    .form-group {
-      margin-bottom: 18px;
-      text-align: left;
-    }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.2s;
+        }
 
-    .form-control {
-      width: 100%;
-      height: 52px;
-      border: none;
-      outline: none;
-      border-radius: 999px;
-      background: #fff;
-      padding: 0 20px;
-      font-size: 0.9rem;
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
-    }
+        .form-group input:focus {
+            border-color: #8A2BE2;
+        }
 
-    .btn-primary {
-      width: 140px;
-      height: 42px;
-      border: none;
-      background: #2f0035;
-      color: #fff;
-      border-radius: 999px;
-      cursor: pointer;
-      font-weight: 500;
-      margin: 0 auto 18px;
-      display: block;
-      transition: transform .15s ease;
-    }
+        button {
+            margin-top: 10px;
+            background: #2E004F;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-    }
+        button:hover {
+            background: #55007F;
+        }
 
-    .helper-text {
-      font-size: 0.78rem;
-      color: #4b5563;
-    }
+        .link-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 2px solid #A63CE9;
+            color: #A63CE9;
+            text-decoration: none;
+            font-size: 16px;
+            background: transparent;
+            transition: background 0.3s, color 0.3s;
+        }
 
-    .helper-text a {
-      color: #a72791;
-      text-decoration: none;
-      font-weight: 500;
-    }
+        .link-button:hover {
+            background: #A63CE9;
+            color: #fff;
+        }
 
-    .helper-text a:hover {
-      text-decoration: underline;
-    }
+        .error {
+            background: #ffd4d4;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: #a30000;
+            font-size: 14px;
+        }
 
-    /* Mensagens do PHP */
-    .error, .success {
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.8rem;
-      margin-bottom: 14px;
-      text-align: left;
-    }
-
-    .error {
-      background: #ffe6e6;
-      border: 1px solid #ff9f9f;
-      color: #a10000;
-    }
-
-    .success {
-      background: #e8fff0;
-      border: 1px solid #8ee0b0;
-      color: #06663a;
-    }
-
-    @media (max-width: 540px) {
-      .forgot-wrapper {
-        width: 92%;
-        padding: 40px 22px 30px;
-      }
-      .forgot-wrapper h1 {
-        font-size: 2rem;
-      }
-    }
-  </style>
+        .success {
+            background: #d4ffd8;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: #1d7a2d;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
   <div class="forgot-wrapper">
@@ -227,9 +211,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       link de recuperação de senha.
     </p>
 
-    <?php if ($mensagem_erro): ?>
-      <div class="error"><?= htmlspecialchars($mensagem_erro) ?></div>
-    <?php endif; ?>
+        <!-- Exibindo mensagens de erro ou sucesso -->
+        <?php if ($mensagem_erro): ?>
+            <div class="error"><?php echo htmlspecialchars($mensagem_erro); ?></div>
+        <?php endif; ?>
 
     <?php if ($mensagem_sucesso): ?>
       <div class="success"><?= htmlspecialchars($mensagem_sucesso) ?></div>
@@ -250,10 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit" class="btn-primary">Enviar</button>
     </form>
 
-    <p class="helper-text">
-      Já tem uma conta?
-      <a href="login.php">Entrar</a>
-    </p>
-  </div>
+        <a class="link-button" href="../dashboard.php">Voltar</a>
+    </div>
 </body>
 </html>

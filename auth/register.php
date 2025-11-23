@@ -50,124 +50,123 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- css global do projeto -->
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      min-height: 100vh;
+      background: linear-gradient(180deg, #4B0082, #B43BF0);
+      margin: 0;
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: linear-gradient(180deg, #3c0a5d 0%, #7e1c8d 60%, #a72791 100%);
-      font-family: "Poppins", Arial, sans-serif;
+      align-items: center;
+      height: 100vh;
+      font-family: "Poppins", sans-serif;
     }
-    .register-wrapper {
-      width: 440px;
+
+    .main-container {
       background: #fff;
-      border-radius: 24px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
-      padding: 38px 42px 32px;
+      width: 420px;
+      padding: 40px 50px;
+      border-radius: 20px;
       text-align: center;
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
     }
-    .register-wrapper h1 {
-      font-size: 2rem;
-      font-weight: 600;
-      color: #460a5f;
+
+    .main-container h1 {
+      font-size: 28px;
+      color: #2E004F;
       margin-bottom: 20px;
     }
-    .social-row {
+
+    .social-login {
       display: flex;
-      gap: 14px;
       justify-content: center;
-      margin-bottom: 26px;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 25px;
     }
-    .social-btn {
-      width: 52px;
-      height: 52px;
-      background: #fff;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-    }
-    .form-group {
-      margin-bottom: 13px;
-      text-align: left;
-    }
-    .form-control {
-      width: 100%;
-      height: 50px;
-      border: none;
-      outline: none;
-      border-radius: 999px;
-      background: #fff;
-      padding: 0 18px;
-      font-size: 0.9rem;
-      box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-    }
-    .form-helper {
-      font-size: 0.75rem;
-      color: #4b5563;
-      margin-left: 6px;
-      text-align: left;
-      margin-bottom: 10px;
-    }
-    .btn-primary-auth {
-      width: 140px;
-      height: 42px;
-      border: none;
-      background: #2f0035;
-      color: #fff;
-      border-radius: 999px;
+
+    .social-login img {
+      width: 42px;
       cursor: pointer;
+    }
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .form label {
+      text-align: left;
+      font-size: 14px;
+      color: #333;
       font-weight: 500;
-      margin: 6px auto 18px;
-      display: block;
-      transition: transform .15s ease;
     }
-    .btn-primary-auth:hover {
-      transform: translateY(-2px);
+
+    .form input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      font-size: 15px;
+      outline: none;
+      transition: 0.2s;
     }
-    .helper-text {
-      font-size: 0.8rem;
-      color: #4b5563;
+
+    .form input:focus {
+      border-color: #8A2BE2;
     }
-    .helper-text a {
-      color: #a72791;
-      font-weight: 500;
+
+    .form button {
+      margin-top: 10px;
+      background: #2E004F;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .form button:hover {
+      background: #55007F;
+    }
+
+    .muted {
+      font-size: 14px;
+      margin-top: 8px;
+      color: #333;
+    }
+
+    .muted a {
+      color: #8A2BE2;
+      font-weight: 600;
       text-decoration: none;
     }
-    .helper-text a:hover {
+
+    .muted a:hover {
       text-decoration: underline;
     }
-    /* alerts do PHP */
-    .alert {
-      font-size: .78rem;
-      padding: 7px 10px;
-      border-radius: 8px;
-      text-align: left;
-      margin-bottom: 10px;
-    }
-    .alert-error {
-      background: #ffe6e6;
-      border: 1px solid #ff9f9f;
-      color: #a10000;
-    }
-    @media (max-width: 480px) {
-      .register-wrapper {
-        width: 92%;
-        padding: 32px 22px 28px;
-      }
+
+    .error {
+      background: #ffd4d4;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      color: #a30000;
+      font-size: 14px;
     }
   </style>
+
 </head>
 <body>
   <div class="register-wrapper">
     <h1>Cadastre-se</h1>
 
-    <div class="social-row">
-      <div class="social-btn">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="30" height="30" alt="Google">
+    <!-- Exibindo erros -->
+    <?php if ($errors): ?>
+      <div class="error">
+        <?php foreach ($errors as $e): ?><p><?=htmlspecialchars($e)?></p><?php endforeach; ?>
       </div>
       <div class="social-btn">
         <img src="https://www.svgrepo.com/show/448224/facebook.svg" width="30" height="30" alt="Facebook">
@@ -178,57 +177,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <div class="alert alert-error"><?= htmlspecialchars($err) ?></div>
     <?php endforeach; ?>
 
-    <form method="post">
-      <div class="form-group">
-        <input
-          id="nome"
-          name="nome"
-          class="form-control"
-          type="text"
-          placeholder="Nome Completo"
-          value="<?= htmlspecialchars($name) ?>"
-          required
-        >
-      </div>
-      <div class="form-group">
-        <input
-          id="email"
-          name="email"
-          class="form-control"
-          type="email"
-          placeholder="Email"
-          value="<?= htmlspecialchars($email) ?>"
-          required
-        >
-      </div>
-      <div class="form-group">
-        <input
-          id="senha"
-          name="senha"
-          class="form-control"
-          type="password"
-          placeholder="Insira sua senha"
-          required
-        >
-      </div>
-      <div class="form-group">
-        <input
-          id="confirmar"
-          name="confirmar"
-          class="form-control"
-          type="password"
-          placeholder="Confirmar senha"
-          required
-        >
-      </div>
-      <p class="form-helper">As senhas devem ser iguais</p>
-      <button class="btn-primary-auth" type="submit">Entrar</button>
+    <!-- Formulário -->
+    <form method="post" autocomplete="off" novalidate class="form">
+      <label>Nome
+        <input type="text" name="nome" value="<?=htmlspecialchars($name)?>" required>
+      </label>
+      <label>E-mail
+        <input type="email" name="email" value="<?=htmlspecialchars($email)?>" required>
+      </label>
+      <label>Senha (mín. 6)
+        <input type="password" name="senha" required>
+      </label>
+      <label>Confirmar senha
+        <input type="password" name="confirmar" required>
+      </label>
+      <button type="submit">Criar conta</button>
     </form>
 
-    <p class="helper-text">
-      Já tem uma conta?
-      <a href="<?= url('auth/login.php') ?>">Entrar</a>
-    </p>
+    <p class="muted">Já tem conta? <a href="<?= url('auth/login.php') ?>">Entrar</a></p>
   </div>
 </body>
 </html>

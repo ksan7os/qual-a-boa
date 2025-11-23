@@ -14,110 +14,87 @@ if (is_logged_in()) {
   <title>Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css">
+
   <style>
-    :root {
-      --roxo: #8A2ED2;
-      --preto: #000;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", sans-serif;
-    }
-    body {
-      min-height: 100vh;
-      background: var(--preto);
-      color: #fff;
-    }
-    .landing {
-      position: relative;
-      width: min(1180px, 100%);
-      height: 100vh;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-    .top-actions {
+    body { background: #000; }
+
+    .top-buttons {
       position: absolute;
-      top: 55px;
-      right: 70px;
+      top: 50px;
+      right: 60px;
       display: flex;
-      gap: 26px;
-      z-index: 5;
+      gap: 20px;
     }
-    .pill-btn {
-      background: rgba(0,0,0,.35);
-      border: 2px solid rgba(138,46,210,.8);
-      border-radius: 999px;
-      padding: 8px 46px 9px;
+
+    .btn-outline {
+      padding: 10px 26px;
+      border: 2px solid #A63CE9;
+      border-radius: 30px;
       color: #fff;
-      font-size: .7rem;
       text-decoration: none;
-      box-shadow: 0 0 14px rgba(138,46,210,.45);
-      transition: transform .12s ease, box-shadow .12s ease;
+      font-size: 16px;
+      transition: .2s;
     }
-    .pill-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(138,46,210,.9);
+
+    .btn-outline:hover {
+      background: #A63CE9;
     }
-    .hero-text {
-      position: absolute;
-      left: 120px;
-      top: 210px;
-      max-width: 360px;
-      z-index: 3;
-    }
-    .hero-title {
-      font-size: clamp(3.4rem, 5vw, 4rem);
-      font-weight: 600;
-      color: var(--roxo);
-      margin-bottom: 20px;
-      letter-spacing: -.02em;
-      line-height: .95;
-    }
-    .hero-sub {
-      font-size: 1.3rem;
-      line-height: 1.25;
-    }
-    .hero-sub .accent { color: var(--roxo); }
-    .hero-image-wrapper {
-      position: absolute;
-      right: -140px;
-      bottom: -25px;
-      width: 720px;
+
+    .home-wrapper {
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      pointer-events: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 80px;
+      height: 100vh;
     }
-    .hero-img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      display: block;
-      filter: drop-shadow(0 0 35px rgba(138,46,210,.3));
+
+    .home-text h1 span {
+      font-size: 92px;
+      font-weight: 700;
+      color: #A63CE9;
+    }
+
+    .home-text p {
+      font-size: 56px;
+      margin-top: 20px;
+      color: #fff;
+      line-height: 1.3;
+    }
+
+    .home-text .purple {
+      color: #A63CE9;
+    }
+
+    .home-image img {
+      width: 1300px;
+      margin-top: 50px;
     }
   </style>
 </head>
-<body>
-  <div class="landing">
-    <div class="top-actions">
-      <a class="pill-btn" href="<?= url('auth/login.php') ?>">Login</a>
-      <a class="pill-btn" href="<?= url('auth/register.php') ?>">Cadastre-se</a>
-    </div>
 
-    <div class="hero-text">
-      <h1 class="hero-title">Qual a Boa?</h1>
-      <p class="hero-sub">
-        Descubra bares,<br>
-        restaurantes e<br>
-        <span class="accent">eventos perto de<br> você.</span>
+<body>
+  <header class="top-buttons">
+    <a href="<?= url('auth/login.php') ?>" class="btn-outline">Login</a>
+    <a href="<?= url('auth/register.php') ?>" class="btn-outline">Cadastre-se</a>
+  </header>
+
+  <section class="home-wrapper">
+    
+    <div class="home-text">
+      <h1><span>Qual a Boa?</span></h1>
+
+      <p>
+        Descubra bares, <br>
+        restaurantes e <br>
+        <span class="purple">eventos perto de você.</span>
       </p>
     </div>
 
-    <div class="hero-image-wrapper">
-      <img src="/" alt="Ponte neon" class="hero-img">
+    <div class="home-image">
+      <img src="img/ponte.png" alt="Ponte iluminada">
     </div>
-  </div>
+
+  </section>
+
 </body>
 </html>
