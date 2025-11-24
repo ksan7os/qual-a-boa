@@ -163,223 +163,69 @@ function capa_src(?string $nome): string {
   <meta charset="utf-8">
   <title>Feed — Qual a Boa?</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/explorar.css"><!-- herdando visual -->
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      background: radial-gradient(circle at bottom, #9c1fd4 0%, #000 60%);
-      display: flex;
-      justify-content: center;
-      padding: 40px 16px;
-    }
-
-    .feed-wrap {
-      width: 100%;
-      max-width: 900px;
-      color: #fff;
-    }
-
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 22px;
-    }
-
-    .topbar h1 {
-      font-size: 32px;
-      font-weight: 700;
-    }
-
-    .btn-top {
-      padding: 10px 18px;
-      background: #ffffff;
-      border-radius: 12px;
-      color: #222;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 14px;
-      border: 1px solid #ddd;
-      transition: 0.15s ease;
-    }
-
-    .btn-top:hover { background: #e9e9e9; }
-
-    .success {
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      padding: 12px;
-      border-radius: 10px;
-      color: #065f46;
-      margin-bottom: 18px;
-      font-size: 14px;
-    }
-
-    .muted {
-      color: #dadada;
-      font-size: 14px;
-      margin-top: 10px;
-    }
-
-    /* CARD PRINCIPAL */
-    .card-unique {
-      background: #fff;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
-      color: #111;
-    }
-
-    .card-unique img {
-      width: 100%;
-      height: 340px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .card-body {
-      padding: 24px 26px 28px;
-    }
-
-    .title {
-      font-weight: 700;
-      font-size: 24px;
-      margin-bottom: 8px;
-      color: #24004b;
-    }
-
-    .meta {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 10px;
-    }
-
-    .actions {
-      display: flex;
-      gap: 14px;
-      margin-top: 18px;
-      flex-wrap: wrap;
-    }
-
-    /* BOTÕES DA AÇÃO */
-    .btn-primary {
-      padding: 12px 18px;
-      border-radius: 14px;
-      border: none;
-      background: #6c1bff;
-      color: #ffffff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: 0.15s ease;
-      box-shadow: 0 6px 14px rgba(108, 27, 255, 0.4);
-    }
-
-    .btn-primary:hover { background: #5413cc; }
-
-    .btn-danger {
-      padding: 12px 18px;
-      border-radius: 14px;
-      background: #f43f5e;
-      border: none;
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.15s ease;
-      box-shadow: 0 6px 14px rgba(244,63,94,0.4);
-    }
-
-    .btn-danger:hover { background: #d72646; }
-
-    /* Voltar */
-    .link-button {
-      display: inline-block;
-      margin-top: 20px;
-      text-decoration: none;
-      color: #fff;
-      padding: 12px 20px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      backdrop-filter: blur(6px);
-      transition: 0.2s ease;
-    }
-
-    .link-button:hover {
-      background: rgba(255,255,255,0.2);
-    }
+    .feed-wrap{max-width:900px;margin:24px auto;padding:0 16px}
+    .card-unique{background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,.06)}
+    .card-unique img{width:100%;height:340px;object-fit:cover;display:block}
+    .card-body{padding:16px}
+    .title{font-weight:800;font-size:22px;margin-bottom:6px}
+    .meta{font-size:13px;color:#64748b;margin:4px 0 10px}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .btn{display:inline-block;padding:10px 14px;border:1px solid #e5e7eb;border-radius:10px;text-decoration:none}
+    .btn-primary{background:#0d6efd;color:#fff;border-color:#0d6efd}
+    .btn-danger{background:#ef4444;color:#fff;border-color:#ef4444}
+    .success{background:#ecfdf5;border:1px solid #a7f3d0;padding:10px;border-radius:8px;color:#065f46;margin-bottom:10px}
+    .muted{color:#64748b}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
   </style>
 </head>
-
 <body>
-
   <div class="feed-wrap">
-
     <div class="topbar">
       <h1>Seu feed</h1>
-      <div style="display:flex; gap:10px;">
-        <a class="btn-top" href="./usuario/preferencias.php">Preferências</a>
-        <a class="btn-top" href="./locais/explorar.php">Explorar</a>
+      <div>
+        <a class="btn" href="./usuario/preferencias.php">Preferências</a>
+        <a class="btn" href="./locais/explorar.php">Explorar</a>
       </div>
     </div>
 
-    <?php if($msg): ?>
-      <div class="success"><?= htmlspecialchars($msg) ?></div>
-    <?php endif; ?>
+    <?php if($msg): ?><div class="success"><?= htmlspecialchars($msg) ?></div><?php endif; ?>
 
     <?php if (!$item): ?>
       <p class="muted">Sem sugestões agora. Tente ajustar as preferências ou voltar mais tarde.</p>
-
     <?php else: ?>
       <div class="card-unique">
         <img src="<?= capa_src($item['imagem_capa'] ?? '') ?>" alt="Capa de <?= htmlspecialchars($item['nome']) ?>">
-
         <div class="card-body">
           <div class="title"><?= htmlspecialchars($item['nome']) ?></div>
-
           <div class="meta">
             <?= htmlspecialchars($item['tipo'] ?? '—') ?>
-            <?php if (!empty($item['faixa_preco'])) echo ' • ' . htmlspecialchars($item['faixa_preco']); ?>
-            <?php if (isset($item['avaliacao_media'])) echo ' • ' . number_format((float)$item['avaliacao_media'],1,',','.').' ★'; ?>
+            <?php if (!empty($item['faixa_preco'])) echo ' • '.htmlspecialchars($item['faixa_preco']); ?>
+            <?php if (isset($item['avaliacao_media'])) echo ' • '.number_format((float)$item['avaliacao_media'],1,',','.').' ★'; ?>
           </div>
-
           <?php if (!empty($item['endereco'])): ?>
             <div class="meta"><?= htmlspecialchars($item['endereco']) ?></div>
           <?php endif; ?>
 
           <div class="actions">
-
-            <!-- Ver detalhes -->
-            <a class="btn-primary"
+            <a class="btn btn-primary"
                href="./locais/detalhes.php?id=<?= (int)$item['id_local'] ?>"
                onclick="navigator.sendBeacon('./api/open.php?id_local=<?= (int)$item['id_local'] ?>')">
               Ver mais detalhes
             </a>
 
-            <!-- Skip -->
+            <!-- Próximo = 'skip' -->
             <form action="./api/skip.php" method="post" style="display:inline;">
               <input type="hidden" name="id_local" value="<?= (int)$item['id_local'] ?>">
-              <button class="btn-danger" type="submit">Próximo</button>
+              <button class="btn btn-danger" type="submit">Próximo</button>
             </form>
-
           </div>
         </div>
       </div>
-
     <?php endif; ?>
-
-    <a class="link-button" href="<?= url('./dashboard.php') ?>">← Voltar para o menu</a>
-
   </div>
-
+  <a class="link-button" href="<?= url('./dashboard.php') ?>">Voltar para o menu</a>
 </body>
 </html>

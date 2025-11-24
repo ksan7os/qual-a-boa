@@ -57,4 +57,4 @@ $csrf = csrf_token();
 <input type="hidden" name="imagem_capa_atual" value="<?= htmlspecialchars($local['imagem_capa'] ?? '') ?>">
 <input class="full" type="file" name="imagem_capa" accept="image/*">
 
-<button class="btn full" type="submit">Salvar</button>
+<button class="btn btn-edit full" type="submit">Salvar</button>

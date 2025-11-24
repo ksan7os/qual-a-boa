@@ -131,397 +131,236 @@ $jaMarcou = $ja_indo;
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title><?= htmlspecialchars($nome) ?> — Detalhes do Local</title>
-
-  <!-- CSS moderno do seu amigo (com pequenas adaptações) -->
+  <title><?= $nome ?> — Detalhes do Local</title>
+  <link rel="stylesheet" href="../css/style.css">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      background: radial-gradient(circle at bottom, #9c1fd4 0%, #000 60%);
-      padding: 40px 0;
-    }
-
+    body { background:#f5f6f8; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .detalhes-wrap { max-width: 1040px; margin: 40px auto; padding: 0 16px; }
     .card {
-      width: 1000px;
-      max-width: 95vw;
-      background: #ffffff;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.35);
+      background:#fff; border-radius:16px; box-shadow:0 6px 18px rgba(0,0,0,.08);
+      overflow:hidden;
     }
-
-    .card-map {
-      width: 100%;
-      height: 320px;
-      background-size: cover;
-      background-position: center;
-    }
-
-    .card-content {
-      padding: 26px 40px 32px;
-      position: relative;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 24px;
-      gap: 24px;
-    }
-
-    .title-block {
-      flex: 1;
-    }
-
-    .title-block h1 {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    .tags-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .tag-pill {
-      padding: 8px 16px;
-      border-radius: 999px;
-      background: #d3ddff;
-      color: #333;
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .info-block {
-      width: 260px;
-      font-size: 13px;
-      color: #555;
-      line-height: 1.5;
-    }
-
-    .info-block strong {
-      color: #222;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .about-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 32px;
-      gap: 30px;
-    }
-
-    .about-text {
-      flex: 1;
-      font-size: 15px;
-      color: #444;
-      line-height: 1.6;
-    }
-
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
+    .hero { width:100%; height:380px; object-fit:cover; display:block; }
+    .content { padding:24px; }
+    h1 { margin:8px 0 16px; font-size:28px; color:#1d1f23; }
+    .meta { display:flex; flex-wrap:wrap; gap:16px; color:#4a4f57; margin-bottom:18px; }
+    .meta span { background:#f1f3f5; padding:6px 10px; border-radius:8px; font-size:14px; }
+    .grid { display:grid; grid-template-columns: 1.2fr .8fr; gap:24px; }
+    .section h3 { margin:10px 0 8px; font-size:18px; color:#1d1f23; }
+    .muted { color:#555; }
+    .chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
     .chip {
-      padding: 6px 14px;
-      background: #eef4ff;
-      border: 1px solid #cddcff;
-      color: #1d4ed8;
-      border-radius: 999px;
-      font-size: 13px;
+      background:#eef4ff; color:#1d4ed8; border:1px solid #dbe7ff;
+      padding:6px 10px; border-radius:999px; font-size:13px;
+    }
+    .list { line-height:1.6; color:#333; }
+    .links a { color:#0a66c2; text-decoration:none; }
+    .links a:hover { text-decoration:underline; }
+    .btn-voltar {
+      display:inline-block; margin:20px 0 8px; background:#0d6efd; color:#fff;
+      padding:10px 16px; border-radius:10px; text-decoration:none;
+    }
+    .btn-voltar:hover { background:#0b5ed7; }
+
+    /* RF08 */
+    .btn-ir {
+      display:inline-block;
+      background:#22c55e;
+      color:#fff;
+      font-weight:600;
+      font-size:1rem;
+      padding:10px 18px;
+      border-radius:10px;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(34,197,94,0.4);
+      transition:all .2s ease;
+      margin: 12px 0;
+    }
+    .btn-ir:hover { background:#16a34a; }
+    .btn-ir-disabled {
+      display:inline-block;
+      background:#e2e8f0;
+      color:#475569;
+      font-weight:600;
+      font-size:1rem;
+      padding:10px 18px;
+      border-radius:10px;
+      margin: 12px 0;
+    }
+    .flash { margin: 12px 0; color:#065f46; background:#ecfdf5; border:1px solid #a7f3d0; padding:8px 10px; border-radius:8px; display:inline-block;}
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero { height:280px; }
     }
 
-    .rating-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 30px 0;
-    }
-
-    .stars {
-      display: flex;
-      gap: 4px;
-      color: #f4c43b;
-      font-size: 22px;
-    }
-
-    .rating-value {
-      font-size: 17px;
-      font-weight: 600;
-      color: #444;
-    }
-
-    .reserve-btn {
-      display: block;
-      margin: 0 auto;
-      width: 60%;
-      max-width: 420px;
-      padding: 14px 0;
-      border-radius: 999px;
-      border: none;
-      background: #7062ff;
-      color: #ffffff;
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      cursor: pointer;
-      box-shadow: 0 12px 18px rgba(55, 40, 201, 0.5);
-      transition: 0.15s ease;
-      text-align: center;
-      text-decoration: none;
-    }
-
-    .reserve-btn:hover {
-      background: #5e4cff;
-      transform: translateY(-1px);
-      box-shadow: 0 15px 25px rgba(55, 40, 201, 0.7);
-    }
-
-    /* Avaliações */
-    .av-card {
-      margin-top: 35px;
-      padding: 18px;
-      background: #f8fafc;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-    }
-
-    .rate-row {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
-    .stars-input {
-      display: flex;
-      flex-direction: row-reverse;
-      gap: 6px;
-    }
-
-    .stars-input input { display: none; }
-    .stars-input label {
-      font-size: 24px;
-      cursor: pointer;
-      filter: grayscale(25%);
-      transition: 0.1s ease;
-    }
-    .stars-input input:checked ~ label { filter: grayscale(0); }
+    /* ===== RF09 ===== */
+    .av-card { margin-top: 24px; padding: 16px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; }
+    .rate-row { display:flex; gap:8px; align-items:center; margin:8px 0 12px; }
+    .stars-input { display:flex; flex-direction: row-reverse; gap:6px; }
+    .stars-input input { display:none; }
+    .stars-input label { font-size: 24px; cursor: pointer; user-select:none; filter: grayscale(25%); transition: transform .1s ease; }
+    .stars-input input:checked ~ label { filter: grayscale(0%); }
     .stars-input label:hover { transform: scale(1.05); }
+    textarea.av-text { width:100%; min-height:90px; padding:10px; border:1px solid #e5e7eb; border-radius:8px; resize: vertical; }
+    .btn-prim { display:inline-block; border:none; background:#0d6efd; color:#fff; padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .btn-prim:hover { background:#0b5ed7; }
 
-    textarea.av-text {
-      width: 100%;
-      min-height: 90px;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      resize: vertical;
-      font-size: 14px;
-    }
-
-    .btn-prim {
-      margin-top: 10px;
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: none;
-      background: #7062ff;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .av-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #e5e7eb;
-    }
-
-    .stars-display {
-      display: flex;
-      gap: 2px;
-      color: #f4c43b;
-      margin-top: 3px;
-    }
-
-    .btn-back {
-      display: block;
-      margin: 30px auto 0;
-      width: fit-content;
-      padding: 10px 18px;
-      border-radius: 999px;
-      background: #d3ddff;
-      color: #333;
-      font-weight: 500;
-      text-decoration: none;
-    }
+    .av-item { padding:12px 0; border-bottom:1px solid #e5e7eb; }
+    .av-item:last-child { border-bottom:none; }
+    .stars-display { display:flex; gap:2px; }
+    .stars-display .s { font-size:16px; color:#f59e0b; }
   </style>
 </head>
-
 <body>
-<div class="card">
+  <div class="detalhes-wrap">
+    <div class="card">
+      <img class="hero" src="<?= $imagem_capa ?>" alt="Imagem de <?= $nome ?>">
 
-  <div class="card-map" style="background-image:url('<?= $imagem_capa ?>')"></div>
+      <div class="content">
+        <h1><?= $nome ?></h1>
 
-  <div class="card-content">
-
-    <!-- Header -->
-    <div class="card-header">
-
-      <div class="title-block">
-        <h1><?= htmlspecialchars($nome) ?></h1>
-
-        <div class="tags-row">
-          <?php if ($tipo): ?><div class="tag-pill"><?= $tipo ?></div><?php endif; ?>
-          <?php if ($faixa): ?><div class="tag-pill"><?= $faixa ?></div><?php endif; ?>
+        <div class="meta">
+          <span><strong>Tipo:</strong> <?= $tipo ?: '—' ?></span>
+          <span><strong>Preço:</strong> <?= $faixa ?: '—' ?></span>
+          <span><strong>Avaliação:</strong> <?= $avaliacao ?>/5</span>
         </div>
-      </div>
 
-      <div class="info-block">
-        <span><strong>Endereço:</strong> <?= $endereco ?: '—' ?></span>
-        <span><strong>Horário:</strong> <?= $horario ?: '—' ?></span>
-        <span><strong>Contato:</strong> <?= $telefone ?: '—' ?></span>
-        <span><strong>Site:</strong> <?= $site_link ?: '—' ?></span>
-      </div>
+        <?php
+        // feedback (RF08)
+        if (isset($_SESSION['flash_msg'])) {
+          echo '<div class="flash">' . htmlspecialchars($_SESSION['flash_msg']) . '</div>';
+          unset($_SESSION['flash_msg']);
+        }
+        ?>
 
-    </div>
-
-    <!-- Sobre + Serviços -->
-    <div class="about-row">
-
-      <div class="about-text">
-        <div class="section-title">Sobre o local</div>
-        <p><?= $descricao ?: 'Sem descrição.' ?></p>
-
-        <div class="section-title" style="margin-top:20px;">Serviços</div>
-        <?php if ($servicos): ?>
-          <div class="chips">
-            <?php foreach ($servicos as $s): ?>
-              <span class="chip"><?= htmlspecialchars($s) ?></span>
-            <?php endforeach; ?>
-          </div>
-        <?php else: ?>
-          <p class="muted">Nenhum serviço informado.</p>
-        <?php endif; ?>
-      </div>
-
-      <div class="info-block">
-        <div class="section-title">Redes sociais</div>
-        <?php if ($redes_links): ?>
-          <?= implode("<br>", $redes_links) ?>
-        <?php else: ?>
-          <p class="muted">Nenhuma informada.</p>
-        <?php endif; ?>
-      </div>
-
-    </div>
-
-    <!-- Avaliação geral -->
-    <div class="rating-row">
-      <div class="stars">
-        <?php for ($i=1; $i<=5; $i++): ?>
-          <span><?= $i <= round($avaliacao) ? "★" : "☆" ?></span>
-        <?php endfor; ?>
-      </div>
-      <div class="rating-value"><?= number_format($avaliacao,1,",",".") ?></div>
-    </div>
-
-    <!-- RF08 botão único -->
-    <?php if ($id_usuario_logado): ?>
-      <?php if (!$jaMarcou): ?>
-        <a href="ir.php?id_local=<?= $id_local ?>" class="reserve-btn">🚶 Estou indo</a>
-      <?php else: ?>
-        <a href="ir.php?id_local=<?= $id_local ?>&acao=cancelar"
-           class="reserve-btn" style="background:#dc2626; box-shadow:0 12px 18px rgba(220,38,38,0.4);">
-           ✖ Cancelar ida
-        </a>
-      <?php endif; ?>
-    <?php else: ?>
-      <p class="muted" style="text-align:center; margin-top:10px;">Faça login para marcar “Estou indo”.</p>
-    <?php endif; ?>
-
-    <!-- RF09: Avaliar -->
-    <div class="av-card">
-      <h3>Avaliar este local</h3>
-
-      <?php if ($id_usuario_logado): ?>
-        <form method="POST" action="avaliar.php">
-          <input type="hidden" name="id_local" value="<?= $id_local ?>">
-
-          <div class="rate-row">
-            <span>Sua nota:</span>
-            <div class="stars-input">
-              <?php $nota_sel = (int)($minha_avaliacao['nota'] ?? 0); ?>
-              <?php for ($i=5; $i>=1; $i--): ?>
-                <input type="radio" id="rate<?= $i ?>" name="nota" value="<?= $i ?>" <?= $nota_sel === $i ? 'checked' : '' ?>>
-                <label for="rate<?= $i ?>">★</label>
-              <?php endfor; ?>
-            </div>
-          </div>
-
-          <textarea class="av-text" name="comentario" placeholder="Conte rapidamente sua experiência (opcional)"><?= htmlspecialchars($minha_avaliacao['comentario'] ?? '') ?></textarea>
-
-          <button type="submit" class="btn-prim">
-            <?= $minha_avaliacao ? "Atualizar avaliação" : "Enviar avaliação" ?>
-          </button>
-        </form>
-      <?php else: ?>
-        <p class="muted">Faça login para avaliar este local.</p>
-      <?php endif; ?>
-    </div>
-
-    <!-- Lista de avaliações -->
-    <div class="av-card">
-      <h3>O que a galera achou</h3>
-
-      <?php if ($avaliacoes): ?>
-        <?php foreach ($avaliacoes as $av): ?>
-          <div class="av-item">
-            <strong><?= htmlspecialchars($av['nome']) ?></strong>
-            <span class="muted"> · <?= date("d/m/Y", strtotime($av['criado_em'])) ?></span>
-
-            <div class="stars-display">
-              <?php for ($i=1; $i<=5; $i++): ?>
-                <span><?= $i <= $av['nota'] ? "★" : "☆" ?></span>
-              <?php endfor; ?>
-            </div>
-
-            <?php if ($av['comentario']): ?>
-              <p><?= nl2br(htmlspecialchars($av['comentario'])) ?></p>
+        <!-- Botão "Estou indo" (RF08) -->
+        <?php if ($id_usuario_logado): ?>
+          <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <?php if (!$jaMarcou): ?>
+              <a href="ir.php?id_local=<?= $id_local ?>" class="btn-ir">🚶 Estou indo</a>
+            <?php else: ?>
+              <div class="btn-ir-disabled">✔ Você marcou que vai</div>
+              <a href="ir.php?id_local=<?= $id_local ?>&acao=cancelar" 
+                class="btn-ir" style="background: #dc2626;">✖ Cancelar ida</a>
             <?php endif; ?>
           </div>
-        <?php endforeach; ?>
-      <?php else: ?>
-        <p class="muted">Ainda não há avaliações.</p>
-      <?php endif; ?>
+        <?php else: ?>
+          <p class="muted">Faça login para marcar “Estou indo”.</p>
+        <?php endif; ?>
+
+        <div class="grid">
+          <!-- coluna esquerda -->
+          <div class="section">
+            <h3>Sobre</h3>
+            <p class="list"><?= $descricao ?: '<span class="muted">Sem descrição.</span>' ?></p>
+
+            <h3 style="margin-top:18px;">Serviços</h3>
+            <?php if ($servicos): ?>
+              <div class="chips">
+                <?php foreach ($servicos as $tag): ?>
+                  <span class="chip"><?= $tag ?></span>
+                <?php endforeach; ?>
+              </div>
+            <?php else: ?>
+              <p class="muted">Nenhum serviço informado.</p>
+            <?php endif; ?>
+
+            <h3 style="margin-top:18px;">Horário de funcionamento</h3>
+            <p class="list"><?= $horario ?: '<span class="muted">Não informado.</span>' ?></p>
+          </div>
+
+          <!-- coluna direita -->
+          <div class="section">
+            <h3>Localização</h3>
+            <p class="list"><?= $endereco ?: '<span class="muted">Não informado.</span>' ?></p>
+
+            <h3 style="margin-top:18px;">Contato</h3>
+            <p class="list"><strong>Site:</strong> <span class="links"><?= $site_link ?: '<span class="muted">—</span>' ?></span></p>
+            <p class="list"><strong>Número:</strong> <?= $telefone ?: '<span class="muted">—</span>' ?></p>
+            <p class="list"><strong>E-mail:</strong> <?= $email ?: '<span class="muted">—</span>' ?></p>
+
+            <h3 style="margin-top:18px;">Redes sociais</h3>
+            <?php if ($redes_links): ?>
+              <div class="list links" style="display:flex; flex-direction:column; gap:6px;">
+                <?= implode('<br>', $redes_links) ?>
+              </div>
+            <?php else: ?>
+              <p class="muted">Nenhuma rede social informada.</p>
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <?php if (!empty($_GET['msg'])): ?>
+          <div class="flash"><?= htmlspecialchars($_GET['msg']) ?></div>
+        <?php endif; ?>
+
+        <?php 
+        // Em detalhes.php, antes do form:
+        $minha = $pdo->prepare("SELECT nota, comentario FROM avaliacoes WHERE id_usuario = :u AND id_local = :l LIMIT 1");
+        $minha->execute([':u' => $id_usuario_logado, ':l' => $id_local]); // <<< usa o mesmo id do usuário logado
+        $minhaAvaliacao = $minha->fetch(PDO::FETCH_ASSOC);
+        ?>
+
+        <!-- ==================== RF09: Formulário de avaliação ==================== -->
+        <div class="av-card">
+          <h3>Avaliar este local</h3>
+
+          <?php if ($id_usuario_logado): ?>
+            <form method="POST" action="avaliar.php">
+              <input type="hidden" name="id_local" value="<?= (int)$id_local ?>">
+
+              <div class="rate-row">
+                <span class="muted">Sua nota:</span>
+                <div class="stars-input">
+                  <?php $nota_sel = (int)($minha_avaliacao['nota'] ?? 0); ?>
+                  <?php for ($i=5; $i>=1; $i--): ?>
+                    <input type="radio" id="star<?= $i ?>" name="nota" value="<?= $i ?>" <?= $nota_sel === $i ? 'checked' : '' ?>>
+                    <label for="star<?= $i ?>">★</label>
+                  <?php endfor; ?>
+                </div>
+              </div>
+
+              <textarea name="comentario" class="av-text" placeholder="Conte rapidamente sua experiência (opcional)"><?= htmlspecialchars($minha_avaliacao['comentario'] ?? '') ?></textarea>
+              <br>
+              <button class="btn-prim" type="submit"><?= $minha_avaliacao ? 'Atualizar avaliação' : 'Enviar avaliação' ?></button>
+            </form>
+          <?php else: ?>
+            <p class="muted">Faça login para avaliar este local.</p>
+          <?php endif; ?>
+        </div>
+        <!-- ===================================================================== -->
+
+        <!-- ==================== RF09: Lista de avaliações ====================== -->
+        <div class="av-card">
+          <h3>O que a galera achou</h3>
+
+          <?php if (!$avaliacoes): ?>
+            <p class="muted">Ainda não há avaliações.</p>
+          <?php else: ?>
+            <?php foreach ($avaliacoes as $av): ?>
+              <div class="av-item">
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <strong><?= htmlspecialchars($av['nome']) ?></strong>
+                  <span class="muted">· <?= date('d/m/Y', strtotime($av['criado_em'])) ?></span>
+                </div>
+                <div class="stars-display" aria-label="Nota <?= (int)$av['nota'] ?> de 5">
+                  <?php for ($i=1; $i<=5; $i++): ?>
+                    <span class="s"><?= $i <= (int)$av['nota'] ? '★' : '☆' ?></span>
+                  <?php endfor; ?>
+                  <span class="muted" style="margin-left:6px;"><?= (int)$av['nota'] ?>/5</span>
+                </div>
+                <?php if (!empty($av['comentario'])): ?>
+                  <p style="margin-top:6px;"><?= nl2br(htmlspecialchars($av['comentario'])) ?></p>
+                <?php endif; ?>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+        <!-- ===================================================================== -->
+
+        <a href="explorar.php" class="btn-voltar">← Voltar para Explorar</a>
+      </div>
     </div>
-
-    <!-- Voltar -->
-    <a href="explorar.php" class="btn-back">← Voltar para Explorar</a>
-
   </div>
-</div>
-
 </body>
 </html>

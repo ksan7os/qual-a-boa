@@ -49,151 +49,182 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- seu css global -->
   <link rel="stylesheet" href="../css/style.css">
   <style>
-    /* Fundo */
+    /* ===== layout da tela de login ===== */
     body {
-      margin: 0;
-      background: linear-gradient(180deg, #4B0082, #B43BF0);
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-family: "Poppins", sans-serif;
+      justify-content: center;
+      background: linear-gradient(180deg, #3c0a5d 0%, #7e1c8d 60%, #a72791 100%);
+      font-family: "Poppins", Arial, sans-serif;
     }
 
-    /* Container branco central */
-    .main-container {
+    .login-wrapper {
+      width: 440px;
       background: #fff;
-      width: 420px;
-      padding: 40px 50px;
-      border-radius: 20px;
+      border-radius: 24px;
+      padding: 38px 42px 32px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
       text-align: center;
-      box-shadow: 0px 4px 20px rgba(0,0,0,0.2);
     }
 
-    /* Título */
-    .main-container h1 {
-      font-size: 28px;
-      color: #2E004F;
+    .login-wrapper h1 {
+      font-size: 2rem;
+      color: #460a5f;
       margin-bottom: 20px;
-    }
-
-    /* Ícones de login social */
-    .social-login {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 18px;
-      margin-bottom: 25px;
-    }
-
-    .social-login img {
-      width: 42px;
-      cursor: pointer;
-    }
-
-    /* Formulário */
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .form label {
-      text-align: left;
-      font-size: 14px;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .form input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #ddd;
-      border-radius: 12px;
-      font-size: 15px;
-      outline: none;
-      transition: 0.2s;
-    }
-
-    .form input:focus {
-      border-color: #8A2BE2;
-    }
-
-    /* Botão */
-    .form button {
-      margin-top: 10px;
-      background: #2E004F;
-      color: #fff;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .form button:hover {
-      background: #55007F;
-    }
-
-    /* Textos inferiores */
-    .text {
-      font-size: 14px;
-      margin-top: 8px;
-      color: #333;
-    }
-
-    .text a {
-      color: #8A2BE2;
       font-weight: 600;
+    }
+
+    .social-row {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .social-btn {
+      width: 52px;
+      height: 52px;
+      background: #fff;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+      text-align: left;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      color: #1f2937;
+      margin-left: 8px;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 50px;
+      border: none;
+      outline: none;
+      background: #fff;
+      border-radius: 999px;
+      padding: 0 18px;
+      font-size: 0.9rem;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+    }
+
+    .btn-primary-login {
+      width: 140px;
+      height: 42px;
+      border: none;
+      outline: none;
+      background: #2f0035;
+      color: #fff;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 500;
+      margin: 10px auto 18px;
+      display: block;
+      transition: transform 0.15s ease;
+    }
+
+    .btn-primary-login:hover {
+      transform: translateY(-2px);
+    }
+
+    .helper-text {
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .helper-text a {
+      color: #a72791;
+      font-weight: 500;
       text-decoration: none;
     }
 
-    .text a:hover {
+    .helper-text a:hover {
       text-decoration: underline;
     }
 
-    /* Mensagens de erro/sucesso */
-    .success {
-      background: #d4ffd8;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      color: #1d7a2d;
-      font-size: 14px;
+    /* alerts vindos do PHP */
+    .alert {
+      font-size: 0.78rem;
+      padding: 7px 10px;
+      border-radius: 8px;
+      text-align: left;
+      margin-bottom: 10px;
+    }
+    .alert-ok {
+      background: #e8fff0;
+      border: 1px solid #8ee0b0;
+      color: #06663a;
+    }
+    .alert-error {
+      background: #ffe6e6;
+      border: 1px solid #ff9f9f;
+      color: #a10000;
     }
 
-    .error {
-      background: #ffd4d4;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 10px;
-      color: #a30000;
-      font-size: 14px;
+    @media (max-width: 480px) {
+      .login-wrapper {
+        width: 90%;
+        padding: 32px 24px 28px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="main-container">
+  <div class="login-wrapper">
     <h1>Login</h1>
 
-    <div class="social-login">
-        <img src="../img/google.png" alt="Google">
-        <img src="../img/facebook.png" alt="Facebook">
+    <div class="social-row">
+      <!-- Mantive suas imagens externas, só coloquei dentro do círculo -->
+      <div class="social-btn">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="30" height="30" alt="Google">
+      </div>
+      <div class="social-btn">
+        <img src="https://www.svgrepo.com/show/448224/facebook.svg" width="30" height="30" alt="Facebook">
+      </div>
     </div>
 
-    <?php if ($ok_msg): ?><div class="success"><?=htmlspecialchars($ok_msg)?></div><?php endif; ?>
-    <?php if ($error): ?><div class="error"><?=htmlspecialchars($error)?></div><?php endif; ?>
+    <?php if ($ok_msg): ?>
+      <div class="alert alert-ok"><?= htmlspecialchars($ok_msg) ?></div>
+    <?php endif; ?>
 
-    <form method="post" autocomplete="off" class="form">
-      <label>E-mail
-        <input type="email" name="email" value="<?=htmlspecialchars($email)?>" required>
-      </label>
-      <label>Senha
-        <input type="password" name="senha" required>
-      </label>
-      <button type="submit">Entrar</button>
+    <?php if ($error): ?>
+      <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
+    <form method="post">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          class="form-control"
+          type="email"
+          name="email"
+          value="<?= htmlspecialchars($email) ?>"
+          required
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input
+          id="senha"
+          class="form-control"
+          type="password"
+          name="senha"
+          required
+        >
+      </div>
+
+      <button type="submit" class="btn-primary-login">Entrar</button>
     </form>
 
     <p class="helper-text" style="margin-top: 0;">

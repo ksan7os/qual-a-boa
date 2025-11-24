@@ -63,153 +63,62 @@ $locaisMarcados = $stmtEstouIndo->fetchAll(PDO::FETCH_ASSOC);
     <title>Perfil do Usuário</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-    body {
-        background: linear-gradient(180deg, #4B0082, #B43BF0);
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-        font-family: "Poppins", sans-serif;
-        color: #333;
-    }
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: #f5f6f8;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+        }
+        .main-container {
+            max-width: 960px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.08);
+            padding: 30px 24px;
+        }
+        h1 { font-size: 26px; margin-bottom: 20px; }
+        .perfil-container {
+            display: flex; flex-direction: column; align-items: flex-start;
+            gap: 6px; margin-bottom: 24px;
+        }
+        .foto-perfil {
+            width: 120px; height: 120px; border-radius: 50%;
+            object-fit: cover; margin-bottom: 10px; border: 3px solid #e2e8f0;
+        }
+        .link-button {
+            display: inline-block; background: #0d6efd; color: #fff;
+            padding: 10px 16px; border-radius: 10px; text-decoration: none;
+            font-weight: 500; margin-right: 10px; transition: background .2s ease;
+        }
+        .link-button:hover { background: #0b5ed7; }
 
-    .main-container {
-        background: #fff;
-        width: 80%;
-        max-width: 960px;
-        padding: 40px 50px;
-        border-radius: 20px;
-        text-align: left;
-        box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
-        margin-top: 50px;
-    }
-
-    h1 {
-        font-size: 26px;
-        color: #2E004F;
-        margin-bottom: 20px;
-    }
-
-    .perfil-container {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        margin-bottom: 24px;
-        text-align: left;
-    }
-
-    .foto-perfil {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 10px;
-        border: 3px solid #e2e8f0;
-    }
-
-    .perfil-container p {
-        font-size: 14px;
-    }
-
-    .link-button {
-        display: inline-block;
-        background: #A63CE9;
-        color: #fff;
-        padding: 12px 20px;
-        border-radius: 30px;
-        font-size: 16px;
-        text-decoration: none;
-        margin-right: 15px;
-        margin-top: 20px;
-        transition: 0.3s;
-    }
-
-    .link-button:hover {
-        background: #8A2BE2;
-    }
-
-    /* Seção Meus rolês marcados */
-    .estou-indo-section {
-        margin-top: 40px;
-    }
-
-    .estou-indo-section h2 {
-        font-size: 20px;
-        color: #1e293b;
-        margin-bottom: 12px;
-    }
-
-    .locais-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 16px;
-    }
-
-    .local-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 12px;
-        font-size: 0.9rem;
-        color: #334155;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    }
-
-    .local-card img {
-        width: 100%;
-        height: 140px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-bottom: 10px;
-    }
-
-    .local-card h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        margin: 4px 0;
-        color: #1e293b;
-    }
-
-    .local-card .meta {
-        color: #475569;
-        font-size: 0.9rem;
-    }
-
-    .local-card .meta small {
-        display: block;
-        color: #64748b;
-        font-size: 0.8rem;
-    }
-
-    .local-card .avaliacao {
-        margin-top: 6px;
-        font-size: 0.8rem;
-        color: #0f172a;
-    }
-
-    .local-card .data {
-        margin-top: 8px;
-        font-size: 0.75rem;
-        color: #64748b;
-    }
-
-    .btn-ver {
-        display: inline-block;
-        background: #2563eb;
-        color: #fff;
-        padding: 8px 12px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        text-decoration: none;
-        margin-top: 10px;
-        box-shadow: 0 4px 10px rgba(37,99,235,0.4);
-    }
-
-    .btn-ver:hover {
-        background: #1d4ed8;
-    }
+        /* ===== RF08: seção “Estou indo” ===== */
+        .estou-indo-section { margin-top: 40px; }
+        .estou-indo-section h2 { font-size: 20px; color: #1e293b; margin-bottom: 12px; }
+        .locais-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px;
+        }
+        .local-card {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px;
+            padding: 12px; font-size: 0.9rem; color: #334155;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+        .local-card img {
+            width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;
+        }
+        .local-card h3 { font-size: 1rem; font-weight: 600; margin: 4px 0; color: #1e293b; }
+        .local-card .meta { color: #475569; font-size: 0.9rem; }
+        .local-card .meta small { display: block; color: #64748b; font-size: 0.8rem; }
+        .local-card .avaliacao { margin-top: 6px; font-size: 0.8rem; color: #0f172a; }
+        .local-card .data { margin-top: 8px; font-size: 0.75rem; color: #64748b; }
+        .btn-ver {
+            display: inline-block; background: #2563eb; color: #fff; padding: 8px 12px;
+            border-radius: 8px; font-size: 0.8rem; font-weight: 500; text-decoration: none;
+            margin-top: 10px; box-shadow: 0 4px 10px rgba(37,99,235,0.4);
+        }
+        .btn-ver:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
@@ -228,7 +137,7 @@ $locaisMarcados = $stmtEstouIndo->fetchAll(PDO::FETCH_ASSOC);
         <a class="link-button" href="../dashboard.php">Voltar</a>
         <a class="link-button" href="logout.php">Logout</a>
 
-        <!-- Seção "Meus rolês marcados" -->
+        <!-- ================= RF08: Locais marcados como “Estou indo” (somente ativos) ================= -->
         <div class="estou-indo-section">
             <h2>Meus rolês marcados (“Estou indo”)</h2>
 
@@ -260,6 +169,7 @@ $locaisMarcados = $stmtEstouIndo->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             <?php endif; ?>
         </div>
+        <!-- =========================================================================== -->
     </div>
 </body>
 </html>

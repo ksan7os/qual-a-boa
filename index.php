@@ -1,7 +1,6 @@
 <?php
 require __DIR__ . '/bd/conexao.php';
 start_session();
-
 if (is_logged_in()) {
     header('Location: ' . url('dashboard.php'));
     exit;
@@ -14,7 +13,6 @@ if (is_logged_in()) {
   <title>Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css">
-
   <style>
     :root {
       --roxo: #8A2ED2;
@@ -40,24 +38,26 @@ if (is_logged_in()) {
     }
     .top-actions {
       position: absolute;
-      top: 50px;
-      right: 60px;
+      top: 55px;
+      right: 70px;
       display: flex;
-      gap: 20px;
+      gap: 26px;
+      z-index: 5;
     }
-
-    .btn-outline {
-      padding: 10px 26px;
-      border: 2px solid #A63CE9;
-      border-radius: 30px;
+    .pill-btn {
+      background: rgba(0,0,0,.35);
+      border: 2px solid rgba(138,46,210,.8);
+      border-radius: 999px;
+      padding: 8px 46px 9px;
       color: #fff;
+      font-size: .7rem;
       text-decoration: none;
-      font-size: 16px;
-      transition: .2s;
+      box-shadow: 0 0 14px rgba(138,46,210,.45);
+      transition: transform .12s ease, box-shadow .12s ease;
     }
-
-    .btn-outline:hover {
-      background: #A63CE9;
+    .pill-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 20px rgba(138,46,210,.9);
     }
     .hero-text {
       position: absolute;
@@ -98,13 +98,12 @@ if (is_logged_in()) {
     }
   </style>
 </head>
-
 <body>
-  <header class="top-buttons">
-    <a href="<?= url('auth/login.php') ?>" class="btn-outline">Login</a>
-    <a href="<?= url('auth/register.php') ?>" class="btn-outline">Cadastre-se</a>
-  </header>
-
+  <div class="landing">
+    <div class="top-actions">
+      <a class="pill-btn" href="<?= url('auth/login.php') ?>">Login</a>
+      <a class="pill-btn" href="<?= url('auth/register.php') ?>">Cadastre-se</a>
+    </div>
     <div class="hero-text">
       <h1 class="hero-title">Qual a Boa?</h1>
       <p class="hero-sub">
@@ -113,12 +112,9 @@ if (is_logged_in()) {
         <span class="accent">eventos perto de<br> você.</span>
       </p>
     </div>
-
     <div class="hero-image-wrapper">
-      <img src="/" alt="Ponte neon" class="hero-img">
+      <img src="/img/ponte.png" alt="Ponte neon" class="hero-img">
     </div>
-
-  </section>
-
+  </div>
 </body>
 </html>
