@@ -98,46 +98,122 @@ $avaliacoes = $stmtAval->fetchAll(PDO::FETCH_ASSOC);
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/explorar.css">
   <style>
-    .section {
-      width: 100%;
-      max-width: 1000px;
-      margin: 20px auto;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      padding: 20px 22px;
-    }
-    .section h2 { margin-bottom: 10px; }
-    .empty {
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: 10px;
-      padding: 14px;
-      color: #475569;
-    }
-    .items-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 14px;
-      margin-top: 12px;
-    }
-    .item-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .meta { font-size: 13px; color: #64748b; }
-    .title { font-weight: 600; color: #111827; }
-    .rating { font-size: 14px; color: #334155; }
-    .actions { margin-top: 6px; display: flex; gap: 8px; }
-    .link-button { display: inline-block; padding: 8px 12px; border-radius: 8px; border: 1px solid #e5e7eb; }
-    .main-container { max-width: 1020px; margin: 0 auto; padding: 14px; }
-    .success { background:#ecfdf5; border:1px solid #a7f3d0; padding:10px; border-radius:8px; color:#065f46; }
-  </style>
+  body {
+    background: linear-gradient(180deg, #4B0082, #B43BF0);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    font-family: "Poppins", sans-serif;
+    color: #333;
+  }
+
+  .main-container {
+    background: #fff;
+    width: 80%;
+    max-width: 960px;
+    padding: 40px 50px;
+    border-radius: 20px;
+    text-align: left;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+    margin-top: 50px;
+  }
+
+  h1 {
+    font-size: 26px;
+    color: #2E004F;
+    margin-bottom: 20px;
+  }
+
+  .section {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+  }
+
+  .section h2 {
+    margin-bottom: 12px;
+    font-size: 20px;
+    color: #1e293b;
+  }
+
+  .empty {
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    padding: 14px;
+    color: #475569;
+    font-size: 14px;
+  }
+
+  .items-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .item-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  }
+
+  .title {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .meta {
+    font-size: 13px;
+    color: #64748b;
+  }
+
+  .rating {
+    font-size: 14px;
+    color: #334155;
+  }
+
+  .actions {
+    margin-top: 6px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .link-button {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    color: #A63CE9;
+    text-decoration: none;
+    font-size: 14px;
+    background: transparent;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .link-button:hover {
+    background: #A63CE9;
+    color: #fff;
+  }
+
+  .success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 10px;
+    border-radius: 8px;
+    color: #065f46;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+</style>
 </head>
 <body>
 
@@ -148,7 +224,7 @@ $avaliacoes = $stmtAval->fetchAll(PDO::FETCH_ASSOC);
       <div class="success" style="margin-bottom:14px;"><?php echo htmlspecialchars($msg, ENT_QUOTES, 'UTF-8'); ?></div>
     <?php endif; ?>
 
-    <!-- Estou indo (apenas auto-cancelados) -->
+    <!-- Locais expirados -->
     <section class="section">
       <h2>Locais expirados automaticamente (últimas idas)</h2>
       <?php if (!$indo): ?>

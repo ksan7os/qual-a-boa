@@ -101,114 +101,392 @@ function split_list($str) {
 <head>
     <meta charset="UTF-8">
     <title>Explorar Locais</title>
-    <link rel="stylesheet" href="../css/explorar.css">
+
+    <style>
+        /* ======================= RESET ======================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at bottom, #9c1fd4 0%, #000 60%);
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-wrapper {
+            width: 1200px;
+            max-width: 100%;
+            color: #fff;
+        }
+
+        /* =============== TÍTULO =============== */
+        .page-title {
+            text-align: center;
+            font-size: 42px;
+            font-weight: 500;
+            color: #e6b5ff;
+            margin-bottom: 32px;
+        }
+
+        /* =============== FILTROS =============== */
+        .filters-bar {
+            background: #ffffff;
+            border-radius: 999px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+            margin: 0 auto 40px;
+            max-width: 980px;
+        }
+
+        .filter-field {
+            flex: 1;
+            position: relative;
+        }
+
+        .filter-input,
+        .filter-select {
+            width: 100%;
+            border-radius: 999px;
+            border: 1px solid #d9d9d9;
+            padding: 10px 16px;
+            font-size: 14px;
+            outline: none;
+            background: #ffffff;
+            color: #555;
+            appearance: none;
+        }
+
+        .filter-field.select-wrapper::after {
+            content: "▾";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            color: #777;
+            pointer-events: none;
+        }
+
+        .apply-button {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 32px;
+            background: #3e0c7a;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+            transition: 0.15s;
+        }
+
+        .apply-button:hover {
+            background: #5210a0;
+            transform: translateY(-1px);
+        }
+
+        /* =============== GRID =============== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 32px;
+            justify-items: center;
+        }
+
+        /* =============== CARD =============== */
+        .place-card {
+            background: #ffffff;
+            border-radius: 18px;
+            width: 320px;
+            max-width: 100%;
+            overflow: hidden;
+            box-shadow: 0 18px 30px rgba(0, 0, 0, 0.45);
+            color: #111;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .place-image {
+            height: 150px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        .place-body {
+            padding: 16px 18px 20px;
+        }
+
+        .place-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .place-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .tag-pill {
+            background: #d3ddff;
+            color: #3a3a3a;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-weight: 500;
+        }
+
+        .place-address {
+            font-size: 12px;
+            color: #444;
+            line-height: 1.5;
+            margin-bottom: 6px;
+        }
+
+        .place-hours {
+            font-size: 12px;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        .place-filters-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .filter-chip {
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: #d3ddff;
+            color: #3a3a3a;
+        }
+
+        /* Estrelas */
+        .stars {
+            position: relative;
+            display: inline-block;
+            font-size: 16px;
+            line-height: 1;
+        }
+
+        .stars::before {
+            content: "★★★★★";
+            color: #d4d4d4;
+        }
+
+        .stars::after {
+            content: "★★★★★";
+            color: #f4c43b;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--rating-pct);
+            overflow: hidden;
+        }
+
+        .place-rating-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            margin-top: 12px;
+            margin-bottom: 16px;
+        }
+
+        .details-button {
+            display: block;
+            width: 70%;
+            margin: 0 auto;
+            border-radius: 999px;
+            padding: 12px 0;
+            background: #757dff;
+            color: white;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            transition: 0.15s;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .details-button:hover {
+            background: #626bff;
+            transform: translateY(-1px);
+        }
+
+        /* Responsivo */
+        @media (max-width: 1050px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 750px) {
+            .filters-bar {
+                flex-wrap: wrap;
+                border-radius: 24px;
+            }
+            .apply-button {
+                width: 100%;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Voltar */
+      .link-button {
+        display: inline-block;
+        margin-top: 60px;
+        text-decoration: none;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        backdrop-filter: blur(6px);
+        transition: 0.2s ease;
+      }
+
+      .link-button:hover {
+        background: rgba(255,255,255,0.2);
+      }
+    </style>
 </head>
+
 <body>
-    <!-- ====== Filtros ====== -->
-    <div class="filters-container">
-        <form method="GET" class="filters-form">
-            <input type="text" name="nome" placeholder="Nome do local" value="<?= htmlspecialchars($nome) ?>">
+<div class="page-wrapper">
 
-            <select name="tipo">
-                <option value="">Tipo</option>
-                <?php foreach ($tipos as $t): ?>
-                    <option value="<?= htmlspecialchars($t) ?>" <?= $tipo === $t ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($t) ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+    <h1 class="page-title">Explorar locais</h1>
 
-            <select name="faixa_preco">
-                <option value="">Faixa de Preço</option>
-                <option value="Econômico" <?= $faixa_preco == 'Econômico' ? 'selected' : '' ?>>Econômico</option>
-                <option value="Médio"      <?= $faixa_preco == 'Médio'      ? 'selected' : '' ?>>Médio</option>
-                <option value="Alto"       <?= $faixa_preco == 'Alto'       ? 'selected' : '' ?>>Alto</option>
-            </select>
+    <!-- ================= FILTROS ================= -->
+    <form method="GET">
+        <div class="filters-bar">
 
-            <input type="text" name="endereco" placeholder="Localização (endereço, bairro, rua...)" value="<?= htmlspecialchars($endereco) ?>">
-
-            <!-- ====== NOVO: Ordenação ====== -->
-            <select name="ordenar" onchange="this.form.submit()">
-                <option value="nome" <?= $ordenar === 'nome' ? 'selected' : '' ?>>A–Z</option>
-                <option value="avaliacao" <?= $ordenar === 'avaliacao' ? 'selected' : '' ?>>Melhor avaliados</option>
-                <option value="popularidade" <?= $ordenar === 'popularidade' ? 'selected' : '' ?>>Mais populares</option>
-            </select>
-
-            <button type="submit">Aplicar Filtros</button>
-        </form>
-    </div>
-
-    <!-- ====== Grid de Locais ====== -->
-    <div class="locais-container">
-        <?php foreach ($locais as $local): ?>
-            <?php
-              $img = $local['imagem_capa']
-                     ? "../img/capa-locais/" . htmlspecialchars($local['imagem_capa'])
-                     : "../img/default-profile.jpg";
-
-              $nomeCard = htmlspecialchars($local['nome']);
-              $tipoCard = htmlspecialchars($local['tipo']);
-              $preco    = htmlspecialchars($local['faixa_preco']);
-              $end      = htmlspecialchars($local['endereco'] ?? '');
-
-              $rating = (float)($local['avaliacao_media'] ?? 0);
-              $rating = max(0, min(5, $rating));
-              $ratingPct = ($rating / 5) * 100;
-
-              $pop = number_format((float)($local['popularidade'] ?? 0), 2);
-
-              $horario_snippet = '';
-              if (!empty($local['horario_funcionamento'])) {
-                $parts = preg_split('/[;\n]+/', (string)$local['horario_funcionamento']);
-                $horario_snippet = trim($parts[0] ?? '');
-              }
-
-              $servicos_arr = split_list($local['servicos'] ?? '');
-              $serv_preview = array_slice($servicos_arr, 0, 3);
-              $serv_extra   = max(0, count($servicos_arr) - 3);
-            ?>
-            <div class="local-card">
-              <img src="<?= $img ?>" alt="Imagem de <?= $nomeCard ?>" class="local-image">
-
-              <div class="local-body">
-                <h3 class="local-title"><?= $nomeCard ?></h3>
-
-                <div class="badges-row">
-                  <span class="badge badge-type"><?= $tipoCard ?></span>
-                  <span class="badge badge-preco"><?= $preco ?></span>
-                </div>
-
-                <?php if ($end): ?>
-                  <p class="local-address"><span class="icon">📍</span> <?= $end ?></p>
-                <?php endif; ?>
-
-                <?php if ($horario_snippet): ?>
-                  <p class="local-hours"><span class="icon">🕒</span> <?= htmlspecialchars($horario_snippet) ?></p>
-                <?php endif; ?>
-
-                <?php if (!empty($serv_preview)): ?>
-                  <div class="chips">
-                    <?php foreach ($serv_preview as $s): ?>
-                      <span class="chip"><?= htmlspecialchars($s) ?></span>
-                    <?php endforeach; ?>
-                    <?php if ($serv_extra > 0): ?>
-                      <span class="chip chip-more">+<?= $serv_extra ?></span>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
-
-                <div class="rating-row">
-                  <div class="stars" style="--rating-pct: <?= $ratingPct ?>%;" aria-label="Avaliação <?= number_format($rating,1) ?> de 5"></div>
-                  <span class="rating-number"><?= number_format($rating,1) ?></span>
-                  <span class="popularity-number">⭐ Pop: <?= $pop ?></span>
-                </div>
-
-                <a href="detalhes.php?id=<?= (int)$local['id_local'] ?>" class="btn-detalhes">Ver detalhes</a>
-              </div>
+            <div class="filter-field">
+                <input type="text" name="nome" class="filter-input"
+                       placeholder="Nome do local"
+                       value="<?= htmlspecialchars($nome) ?>">
             </div>
+
+            <div class="filter-field select-wrapper">
+                <select name="tipo" class="filter-select">
+                    <option value="">Tipo</option>
+                    <?php foreach ($tipos as $t): ?>
+                        <option value="<?= $t ?>" <?= $tipo === $t ? 'selected' : '' ?>><?= $t ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="filter-field select-wrapper">
+                <select name="faixa_preco" class="filter-select">
+                    <option value="">Faixa de Preço</option>
+                    <option value="Econômico" <?= $faixa_preco === "Econômico" ? "selected" : "" ?>>Econômico</option>
+                    <option value="Médio" <?= $faixa_preco === "Médio" ? "selected" : "" ?>>Médio</option>
+                    <option value="Alto" <?= $faixa_preco === "Alto" ? "selected" : "" ?>>Alto</option>
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <input type="text" name="endereco" class="filter-input"
+                       placeholder="Localização"
+                       value="<?= htmlspecialchars($endereco) ?>">
+            </div>
+
+            <div class="filter-field select-wrapper">
+                <select name="ordenar" class="filter-select" onchange="this.form.submit()">
+                    <option value="nome" <?= $ordenar === 'nome' ? 'selected' : '' ?>>A–Z</option>
+                    <option value="avaliacao" <?= $ordenar === 'avaliacao' ? 'selected' : '' ?>>Melhor avaliados</option>
+                    <option value="popularidade" <?= $ordenar === 'popularidade' ? 'selected' : '' ?>>Mais populares</option>
+                </select>
+            </div>
+
+            <button class="apply-button" type="submit">Aplicar</button>
+        </div>
+    </form>
+
+    <!-- ================= GRID ================= -->
+    <div class="cards-grid">
+        <?php foreach ($locais as $local): ?>
+
+            <?php
+                $img = $local["imagem_capa"]
+                    ? "../img/capa-locais/" . htmlspecialchars($local["imagem_capa"])
+                    : "../img/default-profile.jpg";
+
+                $nomeCard = htmlspecialchars($local["nome"]);
+                $tipoCard = htmlspecialchars($local["tipo"]);
+                $precoCard = htmlspecialchars($local["faixa_preco"]);
+                $endCard = htmlspecialchars($local["endereco"]);
+                $rating = (float)($local["avaliacao_media"] ?? 0);
+                $ratingPct = ($rating / 5) * 100;
+                $servicos = split_list($local["servicos"]);
+                $preview = array_slice($servicos, 0, 3);
+                $extra = max(0, count($servicos) - 3);
+            ?>
+
+            <div class="place-card">
+                <img src="<?= $img ?>" class="place-image">
+
+                <div class="place-body">
+                    <div class="place-name"><?= $nomeCard ?></div>
+
+                    <div class="place-tags">
+                        <span class="tag-pill"><?= $tipoCard ?></span>
+                        <span class="tag-pill"><?= $precoCard ?></span>
+                    </div>
+
+                    <?php if ($endCard): ?>
+                        <div class="place-address">📍 <?= $endCard ?></div>
+                    <?php endif; ?>
+
+                    <?php if ($local["horario_funcionamento"]): ?>
+                        <div class="place-hours">🕒 <?= htmlspecialchars($local["horario_funcionamento"]) ?></div>
+                    <?php endif; ?>
+
+                    <?php if ($preview): ?>
+                        <div class="place-filters-row">
+                            <?php foreach ($preview as $s): ?>
+                                <span class="filter-chip"><?= htmlspecialchars($s) ?></span>
+                            <?php endforeach; ?>
+
+                            <?php if ($extra > 0): ?>
+                                <span class="filter-chip">+<?= $extra ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="place-rating-row">
+                        <div class="stars" style="--rating-pct: <?= $ratingPct ?>%;"></div>
+                        <span class="rating-value"><?= number_format($rating, 1) ?></span>
+                    </div>
+
+                    <a href="detalhes.php?id=<?= $local['id_local'] ?>" class="details-button">
+                        Ver detalhes
+                    </a>
+                </div>
+            </div>
+
         <?php endforeach; ?>
     </div>
 
-    <a class="link-button" href="<?= url('./dashboard.php') ?>">Voltar para o menu</a>
+    <a class="link-button" href="<?= url('./dashboard.php') ?>">← Voltar para o menu</a>
+</div>
 </body>
 </html>

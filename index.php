@@ -14,6 +14,7 @@ if (is_logged_in()) {
   <title>Qual a Boa?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/style.css">
+
   <style>
     :root {
       --roxo: #8A2ED2;
@@ -23,7 +24,7 @@ if (is_logged_in()) {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family:  'DM Sans', sans-serif;
+      font-family: "Poppins", sans-serif;
     }
     body {
       min-height: 100vh;
@@ -39,26 +40,24 @@ if (is_logged_in()) {
     }
     .top-actions {
       position: absolute;
-      top: 55px;
-      right: 70px;
+      top: 50px;
+      right: 60px;
       display: flex;
-      gap: 26px;
-      z-index: 5;
+      gap: 20px;
     }
-    .pill-btn {
-      background: rgba(0,0,0,.35);
-      border: 2px solid rgba(138,46,210,.8);
-      border-radius: 999px;
-      padding: 8px 46px 9px;
+
+    .btn-outline {
+      padding: 10px 26px;
+      border: 2px solid #A63CE9;
+      border-radius: 30px;
       color: #fff;
-      font-size: .7rem;
       text-decoration: none;
-      box-shadow: 0 0 14px rgba(138,46,210,.45);
-      transition: transform .12s ease, box-shadow .12s ease;
+      font-size: 16px;
+      transition: .2s;
     }
-    .pill-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 20px rgba(138,46,210,.9);
+
+    .btn-outline:hover {
+      background: #A63CE9;
     }
     .hero-text {
       position: absolute;
@@ -68,93 +67,58 @@ if (is_logged_in()) {
       z-index: 3;
     }
     .hero-title {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 300; /* Light */
-    font-size: 70px;
-    color: transparent; /* Texto transparente para mostrar apenas o gradiente */
-    background: linear-gradient(90deg, #8A2BE2, #FF69B4); /* Degradê de roxo para rosa */
-    background-clip: text; /* Aplica o background apenas ao texto */
-    -webkit-background-clip: text; /* Para compatibilidade com navegadores WebKit */
-    margin-bottom: 20px;
-    letter-spacing: -.02em;
-    line-height: .95;
-
-    /* Propriedades para manter o texto em uma única linha */
-    white-space: nowrap; /* Impede quebras de linha */
-    overflow: visible; /* Permite que o texto ultrapasse o contêiner se necessário */
-    display: inline-block; /* Alternativa: pode usar "display: block" dependendo do layout */
-    width: auto; /* Permite que a largura se ajuste ao conteúdo */
-}
-   .hero-sub {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 48px; /* Atualizado de 1.3rem para 64px conforme solicitado */
-    font-weight: 300; /* Light weight */
-    line-height: 1.25; /* Mantido do código original */
-    color: white; /* Assumindo que o texto é branco como na imagem */
-    white-space: nowrap; /* Para garantir que fique em uma única linha */
-    overflow: visible;
-    width: auto;
-}
-
-/* Para a parte destacada em roxo */
-.hero-sub .highlight {
-    color: #c027ff; /* Cor roxa para destacar parte do texto */
-}
-    .hero-image-wrapper {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 50%;
-    height: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.hero-img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    filter: drop-shadow(0 0 35px rgba(138,46,210,.3));
-    display: block;
-    max-height: 80vh;
-}
-    /* Certifique-se de que o contêiner pai tem position relative */
-    .hero-container {
-        position: relative;
+      font-size: clamp(3.4rem, 5vw, 4rem);
+      font-weight: 600;
+      color: var(--roxo);
+      margin-bottom: 20px;
+      letter-spacing: -.02em;
+      line-height: .95;
     }
-
-/* Certifique-se de que o contêiner pai tenha position relative */
-    .hero-container {
-        position: relative;
-        display: flex;
-        align-items: center;
-        min-height: 100vh; /* Altura mínima para garantir espaço suficiente */
+    .hero-sub {
+      font-size: 1.3rem;
+      line-height: 1.25;
+    }
+    .hero-sub .accent { color: var(--roxo); }
+    .hero-image-wrapper {
+      position: absolute;
+      right: -140px;
+      bottom: -25px;
+      width: 720px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .hero-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 0 35px rgba(138,46,210,.3));
     }
   </style>
 </head>
+
 <body>
-  <div class="landing">
-    <div class="top-actions">
-      <a class="pill-btn" href="<?= url('auth/login.php') ?>">Login</a>
-      <a class="pill-btn" href="<?= url('auth/register.php') ?>">Cadastre-se</a>
-    </div>
+  <header class="top-buttons">
+    <a href="<?= url('auth/login.php') ?>" class="btn-outline">Login</a>
+    <a href="<?= url('auth/register.php') ?>" class="btn-outline">Cadastre-se</a>
+  </header>
 
     <div class="hero-text">
       <h1 class="hero-title">Qual a Boa?</h1>
       <p class="hero-sub">
         Descubra bares,<br>
         restaurantes e<br>
-        <span class="highlight">eventos perto de<br> você.</span>
+        <span class="accent">eventos perto de<br> você.</span>
       </p>
     </div>
 
     <div class="hero-image-wrapper">
-      <img src="ponte.png" alt="Ponte neon" class="hero-img">
+      <img src="/" alt="Ponte neon" class="hero-img">
     </div>
-  </div>
+
+  </section>
+
 </body>
 </html>
